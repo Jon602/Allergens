@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>miogelato - Allergen & Dietary Guide</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        choc: {
+                            800: '#2C1D17',
+                            900: '#382820', // Dark chocolate header
+                            950: '#231712',
+                        },
+                        cream: {
+                            50: '#FDFBF7',
+                            100: '#F6F3EE', // Soft warm cream page background
+                            200: '#EFEAE4', // Subtle card borders & dividers
+                            300: '#E5DED5',
+                        },
+                        brandOrange: {
+                            500: '#E87A28', // Warm amber / orange accent
+                            600: '#D66A1B',
+                            50: '#FFF7F0',
+                        },
+                        mutedBrown: '#8D7A6E'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #F6F3EE; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="min-h-full flex flex-col text-choc-900 bg-cream-100 antialiased selection:bg-brandOrange-500 selection:text-white">
+
+    <!-- TOP HEADER / NAVBAR -->
+    <header class="bg-choc-900 text-white sticky top-0 z-30 shadow-md">
+        <div class="max-w-3xl mx-auto px-4 py-3.5 flex items-center justify-between">
+            <!-- Logo & Brand Title -->
+            <div class="flex items-center space-x-3">
+                <div class="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center font-black text-sm text-white tracking-tighter border border-white/10 shadow-inner">
+                    mg
+                </div>
+                <div>
+                    <h1 class="text-xl font-extrabold tracking-tight leading-none text-white">miogelato</h1>
+                    <p class="text-[11px] text-amber-200/70 font-medium mt-0.5 flex items-center gap-1">
+                        <span>☁️</span> Allergen Reference Guide
+                    </p>
+                </div>
+            </div>
+
+            <!-- Store Info Button -->
+            <div class="flex items-center space-x-2">
+                <button onclick="toggleInfoModal()" class="px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 transition-all text-xs font-semibold flex items-center gap-1.5 border border-white/10">
+                    <svg class="w-3.5 h-3.5 text-brandOrange-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+                    <span>Store Info</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- STICKY SEARCH & DIETARY FILTERS -->
+    <div class="bg-cream-100/95 backdrop-blur-md sticky top-[61px] z-20 border-b border-cream-200/80 py-3 px-4 shadow-sm">
+        <div class="max-w-3xl mx-auto space-y-2.5">
+            
+            <!-- Search Bar -->
+            <div class="relative">
+                <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Search flavor or allergen (e.g., Pistachio, Wheat)..." class="w-full pl-10 pr-10 py-2.5 bg-white rounded-2xl text-sm font-medium placeholder-mutedBrown/60 border border-cream-200 focus:outline-none focus:ring-2 focus:ring-brandOrange-500 shadow-sm transition-all text-choc-900">
+                <svg class="w-4 h-4 text-mutedBrown absolute left-3.5 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                <button id="clearSearch" onclick="clearSearch()" class="hidden absolute right-3 top-3 text-mutedBrown hover:text-choc-900 p-0.5">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <!-- Dietary Filter Toggles -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-0.5 no-scrollbar text-xs">
+                <button onclick="toggleFilter('veg')" id="filter-veg" class="whitespace-nowrap px-3.5 py-1.5 rounded-full border border-cream-200 bg-white text-choc-900 font-semibold transition-all hover:border-brandOrange-500 flex items-center gap-1.5 shadow-sm">
+                    🌱 Vegetarian
+                </button>
+                <button onclick="toggleFilter('vegan')" id="filter-vegan" class="whitespace-nowrap px-3.5 py-1.5 rounded-full border border-cream-200 bg-white text-choc-900 font-semibold transition-all hover:border-brandOrange-500 flex items-center gap-1.5 shadow-sm">
+                    🌿 Vegan
+                </button>
+                <button onclick="toggleFilter('gf')" id="filter-gf" class="whitespace-nowrap px-3.5 py-1.5 rounded-full border border-cream-200 bg-white text-choc-900 font-semibold transition-all hover:border-brandOrange-500 flex items-center gap-1.5 shadow-sm">
+                    🌾 Gluten Free
+                </button>
+                <button onclick="toggleFilter('alc')" id="filter-alc" class="whitespace-nowrap px-3.5 py-1.5 rounded-full border border-cream-200 bg-white text-choc-900 font-semibold transition-all hover:border-brandOrange-500 flex items-center gap-1.5 shadow-sm">
+                    🍷 Contains Alcohol
+                </button>
+                <div class="h-4 w-[1px] bg-cream-300 shrink-0 mx-1"></div>
+                <button onclick="toggleAllCategories(true)" class="whitespace-nowrap text-mutedBrown hover:text-choc-900 font-bold px-1.5">Expand All</button>
+                <button onclick="toggleAllCategories(false)" class="whitespace-nowrap text-mutedBrown hover:text-choc-900 font-bold px-1.5">Collapse All</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="max-w-3xl w-full mx-auto px-4 py-6 flex-1 space-y-8">
+
+        <!-- Category Sections (GELATO, SORBETS / VEGAN GELATO, HOT PUDDINGS, CONES & SUNDRIES) -->
+        <div id="categoryContainer" class="space-y-8">
+            <!-- Dynamically populated via JavaScript -->
+        </div>
+
+        <!-- No Matching Results View -->
+        <div id="noResults" class="hidden text-center py-16 space-y-3 bg-white rounded-3xl border border-cream-200 p-8 shadow-sm">
+            <div class="w-12 h-12 bg-amber-50 text-brandOrange-500 rounded-full flex items-center justify-center mx-auto text-xl font-bold">🔍</div>
+            <h3 class="text-base font-bold text-choc-900">No matching flavors or allergens</h3>
+            <p class="text-xs text-mutedBrown max-w-xs mx-auto">Try clearing your search terms or dietary filters to view all products.</p>
+            <button onclick="clearSearch()" class="mt-2 px-5 py-2.5 bg-brandOrange-500 text-white rounded-xl text-xs font-bold hover:bg-brandOrange-600 transition-colors shadow-sm">Reset Search Filters</button>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-choc-900 text-cream-200 border-t border-choc-800 py-8 text-xs text-center mt-12">
+        <div class="max-w-3xl mx-auto px-4 space-y-3">
+            <div class="flex items-center justify-center space-x-2">
+                <div class="w-6 h-6 rounded-lg bg-white/10 flex items-center justify-center text-[10px] font-black text-white">mg</div>
+                <span class="font-bold text-sm text-white">miogelato</span>
+            </div>
+            <p class="text-amber-200/80 font-medium">Morecambe Seafront &bull; 272 Marine Road Central, LA4 5BX</p>
+            <p class="text-[11px] text-amber-200/50 max-w-md mx-auto leading-relaxed">
+                Please inform our team of any severe allergies prior to ordering. Cross-contamination risks may exist in preparation areas.
+            </p>
+        </div>
+    </footer>
+
+    <!-- INTERACTIVE ALLERGEN POP-UP MODAL -->
+    <div id="allergenModal" class="fixed inset-0 bg-choc-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden transition-opacity duration-200 opacity-0" onclick="handleModalBackdropClick(event)">
+        <div id="modalContent" class="bg-white rounded-[24px] max-w-md w-full overflow-hidden shadow-2xl border border-cream-200 transform scale-95 transition-transform duration-200 flex flex-col max-h-[85vh]">
+            
+            <!-- Modal Header -->
+            <div class="p-5 bg-choc-900 text-white flex items-start justify-between relative">
+                <div>
+                    <span id="modalCategory" class="text-[10px] uppercase tracking-wider font-extrabold text-brandOrange-500 bg-brandOrange-500/10 px-2.5 py-0.5 rounded-full border border-brandOrange-500/20">Category</span>
+                    <h2 id="modalTitle" class="text-xl font-black text-white mt-2 leading-tight">Product Name</h2>
+                    <div id="modalDietaryBadges" class="flex flex-wrap gap-1.5 mt-2.5">
+                        <!-- Unabbreviated badges rendered dynamically -->
+                    </div>
+                </div>
+                <button onclick="closeModal()" class="p-2 text-amber-200/60 hover:text-white rounded-full bg-white/5 hover:bg-white/10 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <!-- Modal Body Content -->
+            <div class="p-5 space-y-4 overflow-y-auto flex-1 bg-cream-50">
+                
+                <!-- CONTAINS Box -->
+                <div id="modalContainsBox" class="p-4 rounded-2xl bg-rose-50 border border-rose-100 space-y-1">
+                    <p class="text-xs font-black text-rose-800 uppercase tracking-wider flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-rose-500"></span> Contains:
+                    </p>
+                    <p id="modalContainsList" class="text-sm font-semibold text-rose-950 pl-3.5 leading-relaxed">None</p>
+                </div>
+
+                <!-- MAY CONTAIN / TRACES Box -->
+                <div id="modalTracesBox" class="p-4 rounded-2xl bg-amber-50 border border-amber-200/80 space-y-1">
+                    <p class="text-xs font-black text-amber-900 uppercase tracking-wider flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-brandOrange-500"></span> May Contain / Traces:
+                    </p>
+                    <p id="modalTracesList" class="text-sm font-semibold text-amber-950 pl-3.5 leading-relaxed">None recorded</p>
+                </div>
+
+                <!-- Special Note / Clean Display -->
+                <div id="modalCleanNote" class="p-4 rounded-2xl bg-emerald-50 border border-emerald-100 hidden">
+                    <p class="text-xs font-bold text-emerald-800 flex items-center gap-2">
+                        <span>✨</span> <span id="modalCleanText">No major declared allergens for this item. Please consult team for batch details.</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Modal Footer Button -->
+            <div class="p-4 bg-white border-t border-cream-200 text-center">
+                <button onclick="closeModal()" class="w-full py-3 bg-choc-900 text-white rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-choc-800 transition-colors shadow-sm">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- STORE INFO MODAL -->
+    <div id="infoModal" class="fixed inset-0 bg-choc-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden transition-opacity duration-200 opacity-0" onclick="if(event.target===this) toggleInfoModal()">
+        <div class="bg-white rounded-[24px] max-w-sm w-full p-6 shadow-2xl space-y-4 border border-cream-200">
+            <div class="flex justify-between items-start">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-choc-900 text-white flex items-center justify-center font-black text-sm">mg</div>
+                    <div>
+                        <h3 class="text-base font-extrabold text-choc-900">miogelato</h3>
+                        <p class="text-xs text-brandOrange-600 font-semibold">Morecambe Seafront</p>
+                    </div>
+                </div>
+                <button onclick="toggleInfoModal()" class="p-1 text-mutedBrown hover:text-choc-900">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div class="space-y-2.5 text-xs text-choc-900 border-t border-b border-cream-200 py-4 font-medium">
+                <div class="flex items-start space-x-2.5">
+                    <span class="text-mutedBrown">📍</span>
+                    <span>272 Marine Road Central, Morecambe, LA4 5BX</span>
+                </div>
+                <div class="flex items-center space-x-2.5">
+                    <span class="text-mutedBrown">📞</span>
+                    <a href="tel:01524419606" class="text-brandOrange-600 font-bold hover:underline">01524 419606</a>
+                </div>
+            </div>
+            <p class="text-[11px] text-mutedBrown leading-relaxed">
+                Products are stored and served in an environment that handles nuts, dairy, gluten, and eggs. Please advise staff if you have severe allergies.
+            </p>
+            <button onclick="toggleInfoModal()" class="w-full py-2.5 bg-cream-100 text-choc-900 font-bold rounded-xl text-xs hover:bg-cream-200 transition-colors">Dismiss</button>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // Exact product dataset with full unabbreviated allergen names
+        const productsData = [
+            // GELATO
+            { 
+                id: 1, 
+                name: "Banoffee", 
+                category: "GELATO", 
+                veg: true, 
+                vegan: false, 
+                gf: false, 
+                alc: false, 
+                contains: ["Milk"], 
+                traces: ["Gluten (Wheat)", "Eggs", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] 
+            },
+            { id: 2, name: "Belgian Milk Chocolate", category: "GELATO", veg: true, vegan: false, gf: true, alc: false, contains: ["Milk", "Soya"], traces: ["Cereals Containing Gluten (Wheat / Barley / Oats)", "Eggs", "Nuts"] },
+            { id: 3, name: "Cherry & Amaretti biscuit", category: "GELATO", veg: true, vegan: false, gf: false, alc: true, contains: ["Cereals Containing Gluten (Wheat)", "Eggs", "Milk", "Nuts (Almonds)"], traces: ["Soya"] },
+            { id: 4, name: "Chocolate Honeycomb", category: "GELATO", veg: true, vegan: false, gf: true, alc: false, contains: ["Milk"], traces: ["Cereals Containing Gluten (Wheat / Barley / Oats)", "Eggs", "Nuts", "Soya"] },
+            { id: 5, name: "Crema (Vanilla)", category: "GELATO", veg: true, vegan: false, gf: true, alc: false, contains: ["Milk"], traces: ["Cereals Containing Gluten (Wheat / Barley / Oats)", "Eggs", "Nuts", "Soya"] },
+            { id: 6, name: "Fig & Mascarpone", category: "GELATO", veg: true, vegan: false, gf: true, alc: true, contains: ["Milk"], traces: ["Cereals Containing Gluten (Wheat / Barley / Oats)", "Eggs", "Nuts", "Soya", "Sulphur Dioxide & Sulphites"] },
+            { id: 7, name: "Kinder Bueno", category: "GELATO", veg: true, vegan: false, gf: false, alc: false, contains: ["Cereals Containing Gluten (Wheat)", "Milk", "Nuts (Hazelnut)", "Soya"], traces: ["Eggs", "Peanuts"] },
+            { id: 8, name: "Lemon & Ginger Biscuit", category: "GELATO", veg: true, vegan: false, gf: false, alc: false, contains: ["Cereals Containing Gluten (Wheat)", "Eggs", "Milk"], traces: ["Nuts", "Soya"] },
+            { id: 9, name: "Lotus Biscoff", category: "GELATO", veg: true, vegan: false, gf: false, alc: false, contains: ["Cereals Containing Gluten (Wheat)", "Milk", "Soya"], traces: ["Eggs", "Nuts"] },
+            { id: 10, name: "Mint Chocolate Chip", category: "GELATO", veg: true, vegan: false, gf: true, alc: false, contains: ["Milk", "Soya"], traces: ["Cereals Containing Gluten (Wheat / Barley / Oats)", "Eggs", "Nuts"] },
+            { id: 11, name: "Oreo", category: "GELATO", veg: true, vegan: false, gf: false, alc: false, contains: ["Cereals Containing Gluten (Wheat)", "Milk", "Soya"], traces: ["Eggs", "Nuts"] },
+            { id: 12, name: "Pistachio", category: "GELATO", veg: true, vegan: false, gf: true, alc: false, contains: ["Milk", "Nuts (Pistachio)"], traces: ["Cereals Containing Gluten (Wheat / Barley / Oats)", "Eggs", "Peanuts", "Soya"] },
+            { id: 13, name: "Raspberry Ripple", category: "GELATO", veg: true, vegan: false, gf: true, alc: false, contains: ["Milk"], traces: ["Cereals Containing Gluten (Wheat / Barley / Oats)", "Eggs", "Nuts", "Soya"] },
+            { id: 14, name: "Salted Caramel", category: "GELATO", veg: true, vegan: false, gf: true, alc: false, contains: ["Milk"], traces: ["Cereals Containing Gluten (Wheat / Barley / Oats)", "Eggs", "Nuts", "Soya"] },
+            { id: 15, name: "Seaside Sherbet", category: "GELATO", veg: true, vegan: false, gf: true, alc: false, contains: ["Milk"], traces: ["Cereals Containing Gluten (Wheat / Barley / Oats)", "Eggs", "Nuts", "Soya"] },
+            { id: 16, name: "Soft Serve", category: "GELATO", veg: true, vegan: false, gf: true, alc: false, contains: ["Milk"], traces: ["Cereals Containing Gluten (Wheat / Barley / Oats)", "Eggs", "Nuts", "Soya"] },
+            { id: 17, name: "Tiramisu", category: "GELATO", veg: true, vegan: false, gf: true, alc: true, contains: ["Eggs", "Milk"], traces: ["Cereals Containing Gluten (Wheat / Barley / Oats)", "Nuts", "Soya"] },
+            { id: 18, name: "White Chocolate", category: "GELATO", veg: true, vegan: false, gf: true, alc: false, contains: ["Milk", "Soya"], traces: ["Cereals Containing Gluten (Wheat / Barley / Oats)", "Eggs", "Nuts"] },
+
+            // SORBETS / VEGAN GELATO
+            { id: 19, name: "Dark chocolate sorbet", category: "SORBETS / VEGAN GELATO", veg: true, vegan: true, gf: true, alc: false, contains: ["Soya"], traces: ["Cereals Containing Gluten (Wheat / Barley / Oats)", "Eggs", "Milk", "Nuts"] },
+            { id: 20, name: "Mango sorbet", category: "SORBETS / VEGAN GELATO", veg: true, vegan: true, gf: true, alc: false, contains: ["Soya"], traces: ["Cereals Containing Gluten (Wheat / Barley / Oats)", "Eggs", "Milk", "Nuts"] },
+            { id: 21, name: "Mixed Berry Sorbet", category: "SORBETS / VEGAN GELATO", veg: true, vegan: true, gf: true, alc: false, contains: ["Soya", "Sulphur Dioxide & Sulphites"], traces: ["Cereals Containing Gluten (Wheat / Barley / Oats)", "Eggs", "Milk", "Nuts"] },
+            { id: 22, name: "Strawberry Sorbet", category: "SORBETS / VEGAN GELATO", veg: true, vegan: true, gf: true, alc: false, contains: ["Soya"], traces: ["Cereals Containing Gluten (Wheat / Barley / Oats)", "Eggs", "Milk", "Nuts"] },
+
+            // HOT PUDDINGS
+            { id: 23, name: "Apple Crumble", category: "HOT PUDDINGS", veg: false, vegan: false, gf: false, alc: false, contains: [], traces: [], note: "Please check with staff for specific batch allergen details." },
+            { id: 24, name: "Cherry Bakewell", category: "HOT PUDDINGS", veg: false, vegan: false, gf: false, alc: false, contains: [], traces: [], note: "Please check with staff for specific batch allergen details." },
+            { id: 25, name: "Gluten Free Sticky Toffee Pudding", category: "HOT PUDDINGS", veg: false, vegan: false, gf: true, alc: false, contains: [], traces: [], note: "Gluten Free item. Please check with staff for detailed allergen advice." },
+            { id: 26, name: "Vegan Apple Crumble", category: "HOT PUDDINGS", veg: true, vegan: true, gf: false, alc: false, contains: [], traces: [], note: "Vegan item. Please check with staff for detailed allergen advice." },
+
+            // CONES & SUNDRIES
+            { id: 27, name: "Large waffle cone", category: "CONES & SUNDRIES", veg: true, vegan: true, gf: false, alc: false, contains: ["Cereals Containing Gluten (Wheat)", "Soya"], traces: [] },
+            { id: 28, name: "Small waffle cone", category: "CONES & SUNDRIES", veg: true, vegan: true, gf: false, alc: false, contains: ["Cereals Containing Gluten (Wheat)", "Soya"], traces: [] },
+            { id: 29, name: "Wafer Cone", category: "CONES & SUNDRIES", veg: true, vegan: true, gf: false, alc: false, contains: ["Cereals Containing Gluten (Wheat)", "Soya"], traces: [] },
+            { id: 30, name: "miogelato wafer", category: "CONES & SUNDRIES", veg: true, vegan: true, gf: false, alc: false, contains: ["Cereals Containing Gluten (Wheat)", "Soya"], traces: [] },
+            { id: 31, name: "Wafer curls", category: "CONES & SUNDRIES", veg: true, vegan: false, gf: false, alc: false, contains: ["Cereals Containing Gluten (Wheat)", "Eggs", "Milk", "Soya"], traces: [] },
+            { id: 32, name: "Chocolate Flakes", category: "CONES & SUNDRIES", veg: true, vegan: false, gf: true, alc: false, contains: ["Milk", "Soya"], traces: ["Nuts"] }
+        ];
+
+        // State Management
+        let activeFilters = { veg: false, vegan: false, gf: false, alc: false };
+        let expandedCategories = {
+            "GELATO": true,
+            "SORBETS / VEGAN GELATO": true,
+            "HOT PUDDINGS": true,
+            "CONES & SUNDRIES": true
+        };
+
+        // Initialize Application
+        document.addEventListener("DOMContentLoaded", () => {
+            renderMenu();
+        });
+
+        // Main Renderer Logic
+        function renderMenu() {
+            const container = document.getElementById("categoryContainer");
+            const searchQuery = document.getElementById("searchInput").value.toLowerCase().trim();
+            const noResults = document.getElementById("noResults");
+            
+            container.innerHTML = "";
+            let totalMatchCount = 0;
+
+            const categories = ["GELATO", "SORBETS / VEGAN GELATO", "HOT PUDDINGS", "CONES & SUNDRIES"];
+
+            categories.forEach(cat => {
+                // Filter matching items
+                const catItems = productsData.filter(item => {
+                    if (item.category !== cat) return false;
+
+                    if (activeFilters.veg && !item.veg) return false;
+                    if (activeFilters.vegan && !item.vegan) return false;
+                    if (activeFilters.gf && !item.gf) return false;
+                    if (activeFilters.alc && !item.alc) return false;
+
+                    if (searchQuery) {
+                        const nameMatch = item.name.toLowerCase().includes(searchQuery);
+                        const containsMatch = item.contains.some(c => c.toLowerCase().includes(searchQuery));
+                        const tracesMatch = item.traces.some(t => t.toLowerCase().includes(searchQuery));
+                        return nameMatch || containsMatch || tracesMatch;
+                    }
+
+                    return true;
+                });
+
+                totalMatchCount += catItems.length;
+
+                if (catItems.length > 0) {
+                    const isExpanded = searchQuery ? true : expandedCategories[cat];
+
+                    const section = document.createElement("div");
+                    section.className = "space-y-3";
+
+                    // Divider Header style matching "FREEZER 1" screenshot style
+                    section.innerHTML = `
+                        <div class="flex items-center gap-3 py-1">
+                            <div class="h-[1px] bg-cream-200 flex-1"></div>
+                            <button onclick="toggleCategory('${cat}')" class="flex items-center gap-2 group focus:outline-none">
+                                <h2 class="font-extrabold text-xs uppercase tracking-widest text-mutedBrown group-hover:text-choc-900 transition-colors">${cat}</h2>
+                                <span class="bg-cream-200 text-choc-900 text-[10px] font-bold px-2 py-0.5 rounded-full">${catItems.length}</span>
+                                <svg class="w-3.5 h-3.5 text-mutedBrown transform transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+                            <div class="h-[1px] bg-cream-200 flex-1"></div>
+                        </div>
+
+                        <!-- Collapsible Product Card Container -->
+                        <div class="${isExpanded ? 'grid' : 'hidden'} grid-cols-1 gap-2.5">
+                            ${catItems.map(item => createProductCard(item)).join('')}
+                        </div>
+                    `;
+
+                    container.appendChild(section);
+                }
+            });
+
+            // Toggle No Results View
+            if (totalMatchCount === 0) {
+                noResults.classList.remove("hidden");
+            } else {
+                noResults.classList.add("hidden");
+            }
+        }
+
+        // Generate Product Card HTML
+        function createProductCard(item) {
+            return `
+                <div onclick="openModal(${item.id})" class="bg-white rounded-[18px] p-4 border border-cream-200 shadow-sm hover:shadow-md hover:border-brandOrange-500/50 transition-all cursor-pointer flex items-center justify-between group active:scale-[0.995]">
+                    <div class="space-y-1.5 flex-1 pr-3">
+                        <div class="flex items-center gap-2">
+                            <h3 class="font-bold text-choc-900 text-base group-hover:text-brandOrange-600 transition-colors leading-tight">${item.name}</h3>
+                        </div>
+
+                        <!-- Unabbreviated Full Dietary Badge Names -->
+                        <div class="flex flex-wrap gap-1">
+                            ${item.veg ? '<span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-800 border border-emerald-100 text-[10px] font-semibold">🌱 Vegetarian</span>' : ''}
+                            ${item.vegan ? '<span class="px-2 py-0.5 rounded-md bg-green-50 text-green-800 border border-green-100 text-[10px] font-semibold">🌿 Vegan</span>' : ''}
+                            ${item.gf ? '<span class="px-2 py-0.5 rounded-md bg-amber-50 text-amber-800 border border-amber-200/60 text-[10px] font-semibold">🌾 Gluten Free</span>' : ''}
+                            ${item.alc ? '<span class="px-2 py-0.5 rounded-md bg-purple-50 text-purple-900 border border-purple-200/60 text-[10px] font-semibold">🍷 Contains Alcohol</span>' : ''}
+                            ${item.contains.length === 0 && !item.note ? '<span class="px-2 py-0.5 rounded-md bg-slate-50 text-slate-600 text-[10px] font-medium">No major allergens</span>' : ''}
+                        </div>
+                    </div>
+
+                    <!-- Orange Accent Plus Icon Button -->
+                    <div class="w-8 h-8 rounded-full bg-brandOrange-50 text-brandOrange-500 group-hover:bg-brandOrange-500 group-hover:text-white flex items-center justify-center transition-colors shrink-0 font-bold border border-brandOrange-500/20">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"></path></svg>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Collapse / Expand Toggle
+        function toggleCategory(category) {
+            expandedCategories[category] = !expandedCategories[category];
+            renderMenu();
+        }
+
+        function toggleAllCategories(expand) {
+            Object.keys(expandedCategories).forEach(cat => {
+                expandedCategories[cat] = expand;
+            });
+            renderMenu();
+        }
+
+        // Filter Actions
+        function toggleFilter(filterKey) {
+            activeFilters[filterKey] = !activeFilters[filterKey];
+            const btn = document.getElementById(`filter-${filterKey}`);
+            
+            if (activeFilters[filterKey]) {
+                btn.classList.remove("bg-white", "text-choc-900", "border-cream-200");
+                btn.classList.add("bg-brandOrange-500", "text-white", "border-brandOrange-500", "shadow-md");
+            } else {
+                btn.classList.add("bg-white", "text-choc-900", "border-cream-200");
+                btn.classList.remove("bg-brandOrange-500", "text-white", "border-brandOrange-500", "shadow-md");
+            }
+
+            renderMenu();
+        }
+
+        // Search Handlers
+        function handleSearch() {
+            const val = document.getElementById("searchInput").value;
+            const clearBtn = document.getElementById("clearSearch");
+            if (val) {
+                clearBtn.classList.remove("hidden");
+            } else {
+                clearBtn.classList.add("hidden");
+            }
+            renderMenu();
+        }
+
+        function clearSearch() {
+            document.getElementById("searchInput").value = "";
+            document.getElementById("clearSearch").classList.add("hidden");
+            activeFilters = { veg: false, vegan: false, gf: false, alc: false };
+            
+            ['veg', 'vegan', 'gf', 'alc'].forEach(key => {
+                const btn = document.getElementById(`filter-${key}`);
+                if (btn) {
+                    btn.classList.add("bg-white", "text-choc-900", "border-cream-200");
+                    btn.classList.remove("bg-brandOrange-500", "text-white", "border-brandOrange-500", "shadow-md");
+                }
+            });
+
+            renderMenu();
+        }
+
+        // Open Allergen Detail Modal
+        function openModal(productId) {
+            const item = productsData.find(p => p.id === productId);
+            if (!item) return;
+
+            document.getElementById("modalTitle").innerText = item.name;
+            document.getElementById("modalCategory").innerText = item.category;
+
+            // Unabbreviated Dietary Badges
+            const badgeContainer = document.getElementById("modalDietaryBadges");
+            badgeContainer.innerHTML = `
+                ${item.veg ? '<span class="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold">🌱 Vegetarian</span>' : ''}
+                ${item.vegan ? '<span class="px-2.5 py-0.5 rounded-full bg-green-50 text-green-800 border border-green-200 text-xs font-bold">🌿 Vegan</span>' : ''}
+                ${item.gf ? '<span class="px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 text-xs font-bold">🌾 Gluten Free</span>' : ''}
+                ${item.alc ? '<span class="px-2.5 py-0.5 rounded-full bg-purple-50 text-purple-900 border border-purple-200 text-xs font-bold">🍷 Contains Alcohol</span>' : ''}
+            `;
+
+            // CONTAINS List (Unabbreviated)
+            const containsBox = document.getElementById("modalContainsBox");
+            const containsList = document.getElementById("modalContainsList");
+            if (item.contains && item.contains.length > 0) {
+                containsList.innerText = item.contains.join(", ");
+                containsBox.classList.remove("hidden");
+            } else {
+                containsBox.classList.add("hidden");
+            }
+
+            // MAY CONTAIN / TRACES List (Unabbreviated)
+            const tracesBox = document.getElementById("modalTracesBox");
+            const tracesList = document.getElementById("modalTracesList");
+            if (item.traces && item.traces.length > 0) {
+                tracesList.innerText = item.traces.join(", ");
+                tracesBox.classList.remove("hidden");
+            } else {
+                tracesBox.classList.add("hidden");
+            }
+
+            // Clean / Specific Batch Advice Note
+            const cleanNote = document.getElementById("modalCleanNote");
+            const cleanText = document.getElementById("modalCleanText");
+            if (item.note) {
+                cleanText.innerText = item.note;
+                cleanNote.classList.remove("hidden");
+            } else if (item.contains.length === 0 && item.traces.length === 0) {
+                cleanText.innerText = "No major declared allergens recorded for this item.";
+                cleanNote.classList.remove("hidden");
+            } else {
+                cleanNote.classList.add("hidden");
+            }
+
+            // Animate Modal Open
+            const modal = document.getElementById("allergenModal");
+            const modalContent = document.getElementById("modalContent");
+
+            modal.classList.remove("hidden");
+            setTimeout(() => {
+                modal.classList.remove("opacity-0");
+                modalContent.classList.remove("scale-95");
+                modalContent.classList.add("scale-100");
+            }, 10);
+
+            document.body.style.overflow = "hidden";
+        }
+
+        // Close Allergen Detail Modal
+        function closeModal() {
+            const modal = document.getElementById("allergenModal");
+            const modalContent = document.getElementById("modalContent");
+
+            modal.classList.add("opacity-0");
+            modalContent.classList.remove("scale-100");
+            modalContent.classList.add("scale-95");
+
+            setTimeout(() => {
+                modal.classList.add("hidden");
+                document.body.style.overflow = "";
+            }, 200);
+        }
+
+        function handleModalBackdropClick(e) {
+            if (e.target.id === "allergenModal") closeModal();
+        }
+
+        // Toggle Store Info Modal
+        function toggleInfoModal() {
+            const modal = document.getElementById("infoModal");
+            if (modal.classList.contains("hidden")) {
+                modal.classList.remove("hidden");
+                setTimeout(() => modal.classList.remove("opacity-0"), 10);
+            } else {
+                modal.classList.add("opacity-0");
+                setTimeout(() => modal.classList.add("hidden"), 200);
+            }
+        }
+    </script>
+</body>
+</html>
