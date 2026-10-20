@@ -53,13 +53,11 @@
         <div class="max-w-3xl mx-auto px-4 py-3.5 flex items-center justify-between">
             <!-- Logo & Brand Title -->
             <div class="flex items-center space-x-3">
-                <div class="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center font-black text-sm text-white tracking-tighter border border-white/10 shadow-inner">
-                    mg
-                </div>
+                <img src="mio-circle.png" alt="miogelato logo" class="w-10 h-10 rounded-full border border-white/20 shadow-sm object-cover">
                 <div>
                     <h1 class="text-xl font-extrabold tracking-tight leading-none text-white">miogelato</h1>
                     <p class="text-[11px] text-amber-200/70 font-medium mt-0.5 flex items-center gap-1">
-                        <span>☁️</span> Allergen Reference Guide
+                        Allergen Reference Guide
                     </p>
                 </div>
             </div>
@@ -129,10 +127,15 @@
     <footer class="bg-choc-900 text-cream-200 border-t border-choc-800 py-8 text-xs text-center mt-12">
         <div class="max-w-3xl mx-auto px-4 space-y-3">
             <div class="flex items-center justify-center space-x-2">
-                <div class="w-6 h-6 rounded-lg bg-white/10 flex items-center justify-center text-[10px] font-black text-white">mg</div>
+                <img src="mio-circle.png" alt="miogelato logo" class="w-6 h-6 rounded-full border border-white/20 object-cover">
                 <span class="font-bold text-sm text-white">miogelato</span>
             </div>
-            <p class="text-amber-200/80 font-medium">Morecambe Seafront &bull; 272 Marine Road Central, LA4 5BX</p>
+            <p class="text-amber-200/80 font-medium">272 Marine Road Central, Morecambe, LA4 5BX &bull; 01524 419606</p>
+            <p class="text-amber-200/80 font-medium">26 New Street, Lancaster, LA1 1EG &bull; 01524 956682</p>
+            <p class="text-amber-200/80 font-medium">
+                Email: <a href="mailto:info@miogelato.co.uk" class="underline hover:text-white">info@miogelato.co.uk</a> &bull; 
+                Web: <a href="https://www.miogelato.co.uk" target="_blank" class="underline hover:text-white">www.miogelato.co.uk</a>
+            </p>
             <p class="text-[11px] text-amber-200/50 max-w-md mx-auto leading-relaxed">
                 Please inform our team of any severe allergies prior to ordering. Cross-contamination risks may exist in preparation areas.
             </p>
@@ -196,24 +199,46 @@
         <div class="bg-white rounded-[24px] max-w-sm w-full p-6 shadow-2xl space-y-4 border border-cream-200">
             <div class="flex justify-between items-start">
                 <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-xl bg-choc-900 text-white flex items-center justify-center font-black text-sm">mg</div>
+                    <img src="mio-circle.png" alt="miogelato logo" class="w-10 h-10 rounded-full border border-cream-200 object-cover">
                     <div>
                         <h3 class="text-base font-extrabold text-choc-900">miogelato</h3>
-                        <p class="text-xs text-brandOrange-600 font-semibold">Morecambe Seafront</p>
+                        <p class="text-xs text-brandOrange-600 font-semibold">Our Locations & Contact</p>
                     </div>
                 </div>
                 <button onclick="toggleInfoModal()" class="p-1 text-mutedBrown hover:text-choc-900">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
-            <div class="space-y-2.5 text-xs text-choc-900 border-t border-b border-cream-200 py-4 font-medium">
-                <div class="flex items-start space-x-2.5">
-                    <span class="text-mutedBrown">📍</span>
-                    <span>272 Marine Road Central, Morecambe, LA4 5BX</span>
+            <div class="space-y-3 text-xs text-choc-900 border-t border-b border-cream-200 py-4 font-medium">
+                <div class="space-y-1">
+                    <div class="flex items-start space-x-2.5">
+                        <span class="text-mutedBrown">📍</span>
+                        <span>272 Marine Road Central, Morecambe, LA4 5BX</span>
+                    </div>
+                    <div class="flex items-center space-x-2.5 pl-6">
+                        <span class="text-mutedBrown">📞</span>
+                        <a href="tel:01524419606" class="text-brandOrange-600 font-bold hover:underline">01524 419606</a>
+                    </div>
                 </div>
-                <div class="flex items-center space-x-2.5">
-                    <span class="text-mutedBrown">📞</span>
-                    <a href="tel:01524419606" class="text-brandOrange-600 font-bold hover:underline">01524 419606</a>
+                <div class="space-y-1 pt-2 border-t border-cream-100">
+                    <div class="flex items-start space-x-2.5">
+                        <span class="text-mutedBrown">📍</span>
+                        <span>26 New Street, Lancaster, LA1 1EG</span>
+                    </div>
+                    <div class="flex items-center space-x-2.5 pl-6">
+                        <span class="text-mutedBrown">📞</span>
+                        <a href="tel:01524956682" class="text-brandOrange-600 font-bold hover:underline">01524 956682</a>
+                    </div>
+                </div>
+                <div class="space-y-1 pt-2 border-t border-cream-100">
+                    <div class="flex items-center space-x-2.5">
+                        <span class="text-mutedBrown">✉️</span>
+                        <a href="mailto:info@miogelato.co.uk" class="text-brandOrange-600 font-bold hover:underline">info@miogelato.co.uk</a>
+                    </div>
+                    <div class="flex items-center space-x-2.5 pt-1">
+                        <span class="text-mutedBrown">🌐</span>
+                        <a href="https://www.miogelato.co.uk" target="_blank" class="text-brandOrange-600 font-bold hover:underline">www.miogelato.co.uk</a>
+                    </div>
                 </div>
             </div>
             <p class="text-[11px] text-mutedBrown leading-relaxed">
@@ -239,8 +264,8 @@
                 contains: ["Milk"], 
                 traces: ["Gluten (Wheat)", "Eggs", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] 
             },
-            { id: 2, name: "Belgian Milk Chocolate", category: "GELATO", veg: true, vegan: false, gf: true, alc: false, contains: ["Milk", "Soya"], traces: ["Cereals Containing Gluten (Wheat / Barley / Oats)", "Eggs", "Nuts"] },
-            { id: 3, name: "Cherry & Amaretti biscuit", category: "GELATO", veg: true, vegan: false, gf: false, alc: true, contains: ["Cereals Containing Gluten (Wheat)", "Eggs", "Milk", "Nuts (Almonds)"], traces: ["Soya"] },
+            { id: 2, name: "Belgian Milk Chocolate", category: "GELATO", veg: true, vegan: false, gf: true, alc: false, contains: ["Milk", "Soya"], traces: ["Gluten (Wheat)", "Eggs", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
+            { id: 3, name: "Cherry & Amaretti biscuit", category: "GELATO", veg: true, vegan: false, gf: true, alc: false, contains: ["Milk", "Eggs"], traces: ["Gluten (Wheat)", "Nuts (Almonds)", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] },
             { id: 4, name: "Chocolate Honeycomb", category: "GELATO", veg: true, vegan: false, gf: true, alc: false, contains: ["Milk"], traces: ["Cereals Containing Gluten (Wheat / Barley / Oats)", "Eggs", "Nuts", "Soya"] },
             { id: 5, name: "Crema (Vanilla)", category: "GELATO", veg: true, vegan: false, gf: true, alc: false, contains: ["Milk"], traces: ["Cereals Containing Gluten (Wheat / Barley / Oats)", "Eggs", "Nuts", "Soya"] },
             { id: 6, name: "Fig & Mascarpone", category: "GELATO", veg: true, vegan: false, gf: true, alc: true, contains: ["Milk"], traces: ["Cereals Containing Gluten (Wheat / Barley / Oats)", "Eggs", "Nuts", "Soya", "Sulphur Dioxide & Sulphites"] },
@@ -264,10 +289,10 @@
             { id: 22, name: "Strawberry Sorbet", category: "SORBETS / VEGAN GELATO", veg: true, vegan: true, gf: true, alc: false, contains: ["Soya"], traces: ["Cereals Containing Gluten (Wheat / Barley / Oats)", "Eggs", "Milk", "Nuts"] },
 
             // HOT PUDDINGS
-            { id: 23, name: "Apple Crumble", category: "HOT PUDDINGS", veg: false, vegan: false, gf: false, alc: false, contains: [], traces: [], note: "Please check with staff for specific batch allergen details." },
-            { id: 24, name: "Cherry Bakewell", category: "HOT PUDDINGS", veg: false, vegan: false, gf: false, alc: false, contains: [], traces: [], note: "Please check with staff for specific batch allergen details." },
-            { id: 25, name: "Gluten Free Sticky Toffee Pudding", category: "HOT PUDDINGS", veg: false, vegan: false, gf: true, alc: false, contains: [], traces: [], note: "Gluten Free item. Please check with staff for detailed allergen advice." },
-            { id: 26, name: "Vegan Apple Crumble", category: "HOT PUDDINGS", veg: true, vegan: true, gf: false, alc: false, contains: [], traces: [], note: "Vegan item. Please check with staff for detailed allergen advice." },
+            { id: 23, name: "Apple Crumble", category: "HOT PUDDINGS", veg: true, vegan: false, gf: false, alc: false, contains: ["Gluten (Wheat)", "Milk"], traces: ["Almond", "Eggs", "Hazelnut", "Pecan Nut", "Pistachio", "Soya", "Walnut"] },
+            { id: 24, name: "Cherry Bakewell", category: "HOT PUDDINGS", veg: true, vegan: false, gf: false, alc: false, contains: ["Gluten (Wheat)", "Egg", "Almond", "Milk"], traces: ["Other nuts"] },
+            { id: 25, name: "Gluten Free Sticky Toffee Pudding", category: "HOT PUDDINGS", veg: true, vegan: false, gf: true, alc: false, contains: ["Eggs", "Milk"], traces: ["Almonds", "Hazelnuts", "Pecan Nut", "Pistachio", "Walnut"] },
+            { id: 26, name: "Vegan Apple Crumble", category: "HOT PUDDINGS", veg: true, vegan: true, gf: false, alc: false, contains: ["Gluten (Wheat, Oats)"], traces: ["Almonds", "Egg", "Hazelnuts", "Milk", "Pecan Nut", "Pistachio", "Soya", "Walnut"] },
 
             // CONES & SUNDRIES
             { id: 27, name: "Large waffle cone", category: "CONES & SUNDRIES", veg: true, vegan: true, gf: false, alc: false, contains: ["Cereals Containing Gluten (Wheat)", "Soya"], traces: [] },
@@ -281,10 +306,10 @@
         // State Management
         let activeFilters = { veg: false, vegan: false, gf: false, alc: false };
         let expandedCategories = {
-            "GELATO": true,
-            "SORBETS / VEGAN GELATO": true,
-            "HOT PUDDINGS": true,
-            "CONES & SUNDRIES": true
+            "GELATO": false,
+            "SORBETS / VEGAN GELATO": false,
+            "HOT PUDDINGS": false,
+            "CONES & SUNDRIES": false
         };
 
         // Initialize Application
@@ -331,16 +356,16 @@
                     const section = document.createElement("div");
                     section.className = "space-y-3";
 
-                    // Divider Header style matching "FREEZER 1" screenshot style
+                    // Divider Header style with larger, more prominent headings
                     section.innerHTML = `
-                        <div class="flex items-center gap-3 py-1">
-                            <div class="h-[1px] bg-cream-200 flex-1"></div>
-                            <button onclick="toggleCategory('${cat}')" class="flex items-center gap-2 group focus:outline-none">
-                                <h2 class="font-extrabold text-xs uppercase tracking-widest text-mutedBrown group-hover:text-choc-900 transition-colors">${cat}</h2>
-                                <span class="bg-cream-200 text-choc-900 text-[10px] font-bold px-2 py-0.5 rounded-full">${catItems.length}</span>
-                                <svg class="w-3.5 h-3.5 text-mutedBrown transform transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                        <div class="flex items-center gap-3 py-2">
+                            <div class="h-[1px] bg-cream-300 flex-1"></div>
+                            <button onclick="toggleCategory('${cat}')" class="flex items-center gap-2.5 group focus:outline-none py-1">
+                                <h2 class="font-black text-sm uppercase tracking-widest text-choc-900 group-hover:text-brandOrange-600 transition-colors">${cat}</h2>
+                                <span class="bg-cream-200 text-choc-900 text-xs font-bold px-2.5 py-0.5 rounded-full">${catItems.length}</span>
+                                <svg class="w-4 h-4 text-choc-900 transform transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
                             </button>
-                            <div class="h-[1px] bg-cream-200 flex-1"></div>
+                            <div class="h-[1px] bg-cream-300 flex-1"></div>
                         </div>
 
                         <!-- Collapsible Product Card Container -->
@@ -378,11 +403,6 @@
                             ${item.alc ? '<span class="px-2 py-0.5 rounded-md bg-purple-50 text-purple-900 border border-purple-200/60 text-[10px] font-semibold">🍷 Contains Alcohol</span>' : ''}
                             ${item.contains.length === 0 && !item.note ? '<span class="px-2 py-0.5 rounded-md bg-slate-50 text-slate-600 text-[10px] font-medium">No major allergens</span>' : ''}
                         </div>
-                    </div>
-
-                    <!-- Orange Accent Plus Icon Button -->
-                    <div class="w-8 h-8 rounded-full bg-brandOrange-50 text-brandOrange-500 group-hover:bg-brandOrange-500 group-hover:text-white flex items-center justify-center transition-colors shrink-0 font-bold border border-brandOrange-500/20">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"></path></svg>
                     </div>
                 </div>
             `;
