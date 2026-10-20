@@ -109,7 +109,7 @@
     <!-- MAIN CONTENT CONTAINER -->
     <main class="max-w-3xl w-full mx-auto px-4 py-6 flex-1 space-y-8">
 
-        <!-- Category Sections (GELATO, SORBETS / VEGAN GELATO, HOT PUDDINGS, CONES & SUNDRIES) -->
+        <!-- Category Sections -->
         <div id="categoryContainer" class="space-y-8">
             <!-- Dynamically populated via JavaScript -->
         </div>
@@ -155,9 +155,7 @@
                 <div>
                     <span id="modalCategory" class="text-[10px] uppercase tracking-wider font-extrabold text-brandOrange-500 bg-brandOrange-500/10 px-2.5 py-0.5 rounded-full border border-brandOrange-500/20">Category</span>
                     <h2 id="modalTitle" class="text-xl font-black text-white mt-2 leading-tight">Product Name</h2>
-                    <div id="modalDietaryBadges" class="flex flex-wrap gap-1.5 mt-2.5">
-                        <!-- Unabbreviated badges rendered dynamically -->
-                    </div>
+                    <div id="modalDietaryBadges" class="flex flex-wrap gap-1.5 mt-2.5"></div>
                 </div>
                 <button onclick="closeModal()" class="p-2 text-amber-200/60 hover:text-white rounded-full bg-white/5 hover:bg-white/10 transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -166,8 +164,6 @@
 
             <!-- Modal Body Content -->
             <div class="p-5 space-y-4 overflow-y-auto flex-1 bg-cream-50">
-                
-                <!-- CONTAINS Box -->
                 <div id="modalContainsBox" class="p-4 rounded-2xl bg-rose-50 border border-rose-100 space-y-1">
                     <p class="text-xs font-black text-rose-800 uppercase tracking-wider flex items-center gap-1.5">
                         <span class="w-2 h-2 rounded-full bg-rose-500"></span> Contains:
@@ -175,7 +171,6 @@
                     <p id="modalContainsList" class="text-sm font-semibold text-rose-950 pl-3.5 leading-relaxed">None</p>
                 </div>
 
-                <!-- MAY CONTAIN / TRACES Box -->
                 <div id="modalTracesBox" class="p-4 rounded-2xl bg-amber-50 border border-amber-200/80 space-y-1">
                     <p class="text-xs font-black text-amber-900 uppercase tracking-wider flex items-center gap-1.5">
                         <span class="w-2 h-2 rounded-full bg-brandOrange-500"></span> May Contain / Traces:
@@ -183,7 +178,6 @@
                     <p id="modalTracesList" class="text-sm font-semibold text-amber-950 pl-3.5 leading-relaxed">None recorded</p>
                 </div>
 
-                <!-- Special Note / Clean Display -->
                 <div id="modalCleanNote" class="p-4 rounded-2xl bg-emerald-50 border border-emerald-100 hidden">
                     <p class="text-xs font-bold text-emerald-800 flex items-center gap-2">
                         <span>✨</span> <span id="modalCleanText">No major declared allergens for this item. Please consult team for batch details.</span>
@@ -254,20 +248,8 @@
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        // Exact product dataset with full unabbreviated allergen names
         const productsData = [
-            // GELATO
-            { 
-                id: 1, 
-                name: "Banoffee", 
-                category: "GELATO", 
-                veg: true, 
-                vegan: false, 
-                gf: false, 
-                alc: false, 
-                contains: ["Milk"], 
-                traces: ["Gluten (Wheat)", "Eggs", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] 
-            },
+            { id: 1, name: "Banoffee", category: "GELATO", veg: true, vegan: false, gf: false, alc: false, contains: ["Milk"], traces: ["Gluten (Wheat)", "Eggs", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] },
             { id: 2, name: "Belgian Milk Chocolate", category: "GELATO", veg: true, vegan: false, gf: true, alc: false, contains: ["Milk", "Soya"], traces: ["Gluten (Wheat)", "Eggs", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
             { id: 3, name: "Cherry & Amaretti biscuit", category: "GELATO", veg: true, vegan: false, gf: true, alc: false, contains: ["Milk", "Eggs"], traces: ["Gluten (Wheat)", "Nuts (Almonds)", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] },
             { id: 4, name: "Chocolate Honeycomb", category: "GELATO", veg: true, vegan: false, gf: true, alc: false, contains: ["Milk"], traces: ["Cereals Containing Gluten (Wheat / Barley / Oats)", "Eggs", "Nuts", "Soya"] },
@@ -286,19 +268,16 @@
             { id: 17, name: "Tiramisu", category: "GELATO", veg: true, vegan: false, gf: true, alc: true, contains: ["Eggs", "Milk"], traces: ["Cereals Containing Gluten (Wheat / Barley / Oats)", "Nuts", "Soya"] },
             { id: 18, name: "White Chocolate", category: "GELATO", veg: true, vegan: false, gf: true, alc: false, contains: ["Milk", "Soya"], traces: ["Cereals Containing Gluten (Wheat / Barley / Oats)", "Eggs", "Nuts"] },
 
-            // SORBETS / VEGAN GELATO
             { id: 19, name: "Dark chocolate sorbet", category: "SORBETS / VEGAN GELATO", veg: true, vegan: true, gf: true, alc: false, contains: ["Soya"], traces: ["Cereals Containing Gluten (Wheat / Barley / Oats)", "Eggs", "Milk", "Nuts"] },
             { id: 20, name: "Mango sorbet", category: "SORBETS / VEGAN GELATO", veg: true, vegan: true, gf: true, alc: false, contains: ["Soya"], traces: ["Cereals Containing Gluten (Wheat / Barley / Oats)", "Eggs", "Milk", "Nuts"] },
             { id: 21, name: "Mixed Berry Sorbet", category: "SORBETS / VEGAN GELATO", veg: true, vegan: true, gf: true, alc: false, contains: ["Soya", "Sulphur Dioxide & Sulphites"], traces: ["Cereals Containing Gluten (Wheat / Barley / Oats)", "Eggs", "Milk", "Nuts"] },
             { id: 22, name: "Strawberry Sorbet", category: "SORBETS / VEGAN GELATO", veg: true, vegan: true, gf: true, alc: false, contains: ["Soya"], traces: ["Cereals Containing Gluten (Wheat / Barley / Oats)", "Eggs", "Milk", "Nuts"] },
 
-            // HOT PUDDINGS
             { id: 23, name: "Apple Crumble", category: "HOT PUDDINGS", veg: true, vegan: false, gf: false, alc: false, contains: ["Gluten (Wheat)", "Milk"], traces: ["Almond", "Eggs", "Hazelnut", "Pecan Nut", "Pistachio", "Soya", "Walnut"] },
             { id: 24, name: "Cherry Bakewell", category: "HOT PUDDINGS", veg: true, vegan: false, gf: false, alc: false, contains: ["Gluten (Wheat)", "Egg", "Almond", "Milk"], traces: ["Other nuts"] },
             { id: 25, name: "Gluten Free Sticky Toffee Pudding", category: "HOT PUDDINGS", veg: true, vegan: false, gf: true, alc: false, contains: ["Eggs", "Milk"], traces: ["Almonds", "Hazelnuts", "Pecan Nut", "Pistachio", "Walnut"] },
             { id: 26, name: "Vegan Apple Crumble", category: "HOT PUDDINGS", veg: true, vegan: true, gf: false, alc: false, contains: ["Gluten (Wheat, Oats)"], traces: ["Almonds", "Egg", "Hazelnuts", "Milk", "Pecan Nut", "Pistachio", "Soya", "Walnut"] },
 
-            // CONES & SUNDRIES
             { id: 27, name: "Large waffle cone", category: "CONES & SUNDRIES", veg: true, vegan: true, gf: false, alc: false, contains: ["Cereals Containing Gluten (Wheat)", "Soya"], traces: [] },
             { id: 28, name: "Small waffle cone", category: "CONES & SUNDRIES", veg: true, vegan: true, gf: false, alc: false, contains: ["Cereals Containing Gluten (Wheat)", "Soya"], traces: [] },
             { id: 29, name: "Wafer Cone", category: "CONES & SUNDRIES", veg: true, vegan: true, gf: false, alc: false, contains: ["Cereals Containing Gluten (Wheat)", "Soya"], traces: [] },
@@ -307,7 +286,6 @@
             { id: 32, name: "Chocolate Flakes", category: "CONES & SUNDRIES", veg: true, vegan: false, gf: true, alc: false, contains: ["Milk", "Soya"], traces: ["Nuts"] }
         ];
 
-        // State Management
         let activeFilters = { veg: false, vegan: false, gf: false, alc: false };
         let expandedCategories = {
             "GELATO": false,
@@ -316,12 +294,10 @@
             "CONES & SUNDRIES": false
         };
 
-        // Initialize Application
         document.addEventListener("DOMContentLoaded", () => {
             renderMenu();
         });
 
-        // Main Renderer Logic
         function renderMenu() {
             const container = document.getElementById("categoryContainer");
             const searchQuery = document.getElementById("searchInput").value.toLowerCase().trim();
@@ -333,7 +309,6 @@
             const categories = ["GELATO", "SORBETS / VEGAN GELATO", "HOT PUDDINGS", "CONES & SUNDRIES"];
 
             categories.forEach(cat => {
-                // Filter matching items
                 const catItems = productsData.filter(item => {
                     if (item.category !== cat) return false;
 
@@ -360,7 +335,6 @@
                     const section = document.createElement("div");
                     section.className = "space-y-3";
 
-                    // Divider Header style with larger, more prominent headings
                     section.innerHTML = `
                         <div class="flex items-center gap-3 py-2">
                             <div class="h-[1px] bg-cream-300 flex-1"></div>
@@ -372,7 +346,6 @@
                             <div class="h-[1px] bg-cream-300 flex-1"></div>
                         </div>
 
-                        <!-- Collapsible Product Card Container -->
                         <div class="${isExpanded ? 'grid' : 'hidden'} grid-cols-1 gap-2.5">
                             ${catItems.map(item => createProductCard(item)).join('')}
                         </div>
@@ -382,7 +355,6 @@
                 }
             });
 
-            // Toggle No Results View
             if (totalMatchCount === 0) {
                 noResults.classList.remove("hidden");
             } else {
@@ -390,7 +362,6 @@
             }
         }
 
-        // Generate Product Card HTML
         function createProductCard(item) {
             return `
                 <div onclick="openModal(${item.id})" class="bg-white rounded-[18px] p-4 border border-cream-200 shadow-sm hover:shadow-md hover:border-brandOrange-500/50 transition-all cursor-pointer flex items-center justify-between group active:scale-[0.995]">
@@ -399,7 +370,6 @@
                             <h3 class="font-bold text-choc-900 text-base group-hover:text-brandOrange-600 transition-colors leading-tight">${item.name}</h3>
                         </div>
 
-                        <!-- Unabbreviated Full Dietary Badge Names -->
                         <div class="flex flex-wrap gap-1">
                             ${item.veg ? '<span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-800 border border-emerald-100 text-[10px] font-semibold">🌱 Vegetarian</span>' : ''}
                             ${item.vegan ? '<span class="px-2 py-0.5 rounded-md bg-green-50 text-green-800 border border-green-100 text-[10px] font-semibold">🌿 Vegan</span>' : ''}
@@ -412,7 +382,6 @@
             `;
         }
 
-        // Collapse / Expand Toggle
         function toggleCategory(category) {
             expandedCategories[category] = !expandedCategories[category];
             renderMenu();
@@ -425,7 +394,6 @@
             renderMenu();
         }
 
-        // Filter Actions
         function toggleFilter(filterKey) {
             activeFilters[filterKey] = !activeFilters[filterKey];
             const btn = document.getElementById(`filter-${filterKey}`);
@@ -441,7 +409,6 @@
             renderMenu();
         }
 
-        // Search Handlers
         function handleSearch() {
             const val = document.getElementById("searchInput").value;
             const clearBtn = document.getElementById("clearSearch");
@@ -469,7 +436,6 @@
             renderMenu();
         }
 
-        // Open Allergen Detail Modal
         function openModal(productId) {
             const item = productsData.find(p => p.id === productId);
             if (!item) return;
@@ -477,7 +443,6 @@
             document.getElementById("modalTitle").innerText = item.name;
             document.getElementById("modalCategory").innerText = item.category;
 
-            // Unabbreviated Dietary Badges
             const badgeContainer = document.getElementById("modalDietaryBadges");
             badgeContainer.innerHTML = `
                 ${item.veg ? '<span class="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold">🌱 Vegetarian</span>' : ''}
@@ -486,7 +451,6 @@
                 ${item.alc ? '<span class="px-2.5 py-0.5 rounded-full bg-purple-50 text-purple-900 border border-purple-200 text-xs font-bold">🍷 Contains Alcohol</span>' : ''}
             `;
 
-            // CONTAINS List (Unabbreviated)
             const containsBox = document.getElementById("modalContainsBox");
             const containsList = document.getElementById("modalContainsList");
             if (item.contains && item.contains.length > 0) {
@@ -496,7 +460,6 @@
                 containsBox.classList.add("hidden");
             }
 
-            // MAY CONTAIN / TRACES List (Unabbreviated)
             const tracesBox = document.getElementById("modalTracesBox");
             const tracesList = document.getElementById("modalTracesList");
             if (item.traces && item.traces.length > 0) {
@@ -506,7 +469,6 @@
                 tracesBox.classList.add("hidden");
             }
 
-            // Clean / Specific Batch Advice Note
             const cleanNote = document.getElementById("modalCleanNote");
             const cleanText = document.getElementById("modalCleanText");
             if (item.note) {
@@ -519,7 +481,6 @@
                 cleanNote.classList.add("hidden");
             }
 
-            // Animate Modal Open
             const modal = document.getElementById("allergenModal");
             const modalContent = document.getElementById("modalContent");
 
@@ -533,7 +494,6 @@
             document.body.style.overflow = "hidden";
         }
 
-        // Close Allergen Detail Modal
         function closeModal() {
             const modal = document.getElementById("allergenModal");
             const modalContent = document.getElementById("modalContent");
@@ -552,7 +512,6 @@
             if (e.target.id === "allergenModal") closeModal();
         }
 
-        // Toggle Store Info Modal
         function toggleInfoModal() {
             const modal = document.getElementById("infoModal");
             if (modal.classList.contains("hidden")) {
