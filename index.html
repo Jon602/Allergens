@@ -13,7 +13,7 @@
                     colors: {
                         choc: {
                             800: '#2C1D17',
-                            900: '#382820', // Dark chocolate header
+                            900: '#382820', // Dark chocolate header & primary text
                             950: '#231712',
                         },
                         cream: {
@@ -22,6 +22,7 @@
                             200: '#EFEAE4', // Subtle card borders & dividers
                             300: '#E5DED5',
                         },
+                        cardBg: '#E5E5E5', // Custom light grey sampled from your latest swatch image
                         brandOrange: {
                             500: '#E87A28', // Warm amber / orange accent
                             600: '#D66A1B',
@@ -113,16 +114,27 @@
     <!-- MAIN CONTENT CONTAINER -->
     <main class="max-w-3xl w-full mx-auto px-4 py-6 flex-1 space-y-8">
 
+        <!-- Prominent Allergy Warning Banner (Orange Theme) -->
+        <div class="bg-brandOrange-50 border-2 border-brandOrange-500/50 rounded-2xl p-4 shadow-sm flex items-start gap-3">
+            <span class="text-xl">⚠️</span>
+            <div class="space-y-1">
+                <h4 class="text-xs font-black text-brandOrange-600 uppercase tracking-wider">Important Allergy Notice</h4>
+                <p class="text-xs text-choc-900 font-medium leading-relaxed">
+                    Please inform our team of any severe allergies prior to ordering. Cross-contamination risks may exist in preparation areas.
+                </p>
+            </div>
+        </div>
+
         <!-- Category Sections -->
         <div id="categoryContainer" class="space-y-6">
             <!-- Dynamically populated via JavaScript -->
         </div>
 
         <!-- No Matching Results View -->
-        <div id="noResults" class="hidden text-center py-16 space-y-3 bg-[#70584E]/15 rounded-3xl border border-[#70584E]/30 p-8 shadow-sm">
+        <div id="noResults" class="hidden text-center py-16 space-y-3 bg-cardBg rounded-3xl border border-choc-900/10 p-8 shadow-sm">
             <div class="w-12 h-12 bg-amber-50 text-brandOrange-500 rounded-full flex items-center justify-center mx-auto text-xl font-bold">🔍</div>
             <h3 class="text-base font-bold text-choc-900">No matching flavors or allergens</h3>
-            <p class="text-xs text-mutedBrown max-w-xs mx-auto">Try clearing your search terms or dietary filters to view all products.</p>
+            <p class="text-xs text-choc-900/80 max-w-xs mx-auto">Try clearing your search terms or dietary filters to view all products.</p>
             <button onclick="clearSearch()" class="mt-2 px-5 py-2.5 bg-brandOrange-500 text-white rounded-xl text-xs font-bold hover:bg-brandOrange-600 transition-colors shadow-sm">Reset Search Filters</button>
         </div>
     </main>
@@ -139,7 +151,7 @@
                     <a href="https://maps.google.com/?q=272+Marine+Road+Central,+Morecambe+LA4+5BX" target="_blank" class="hover:underline">272 Marine Road Central, Morecambe, LA4 5BX</a>
                 </p>
                 <p class="text-amber-200/80 font-medium mt-0.5">
-                    📞 <a href="tel:01524419606" class="underline hover:text-white">01524 419606</a>
+                    <a href="tel:01524419606" class="underline hover:text-white">01524 419606</a>
                 </p>
             </div>
             <div>
@@ -147,15 +159,12 @@
                     <a href="https://maps.google.com/?q=26+New+Street,+Lancaster+LA1+1EG" target="_blank" class="hover:underline">26 New Street, Lancaster, LA1 1EG</a>
                 </p>
                 <p class="text-amber-200/80 font-medium mt-0.5">
-                    📞 <a href="tel:01524956682" class="underline hover:text-white">01524 956682</a>
+                    <a href="tel:01524956682" class="underline hover:text-white">01524 956682</a>
                 </p>
             </div>
             <p class="text-amber-200/80 font-medium pt-1">
                 Email: <a href="mailto:info@miogelato.co.uk" class="underline hover:text-white">info@miogelato.co.uk</a> &bull; 
                 Web: <a href="https://www.miogelato.co.uk" target="_blank" class="underline hover:text-white">www.miogelato.co.uk</a>
-            </p>
-            <p class="text-[11px] text-amber-200/50 max-w-md mx-auto leading-relaxed pt-1">
-                Please inform our team of any severe allergies prior to ordering. Cross-contamination risks may exist in preparation areas.
             </p>
         </div>
     </footer>
@@ -214,7 +223,6 @@
                     <img src="mio-circle.png" alt="miogelato logo" class="w-10 h-10 rounded-full border border-cream-200 object-cover">
                     <div>
                         <h3 class="text-base font-extrabold text-choc-900">miogelato</h3>
-                        <p class="text-xs text-brandOrange-600 font-semibold">Our Locations & Contact</p>
                     </div>
                 </div>
                 <button onclick="toggleInfoModal()" class="p-1 text-mutedBrown hover:text-choc-900">
@@ -380,7 +388,7 @@
 
         function createProductCard(item) {
             return `
-                <div onclick="openModal(${item.id})" class="bg-[#70584E]/15 rounded-[14px] p-3 border border-[#70584E]/30 shadow-sm hover:shadow-md hover:border-brandOrange-500/50 transition-all cursor-pointer flex flex-col items-center justify-between text-center group active:scale-[0.995]">
+                <div onclick="openModal(${item.id})" class="bg-cardBg rounded-[14px] p-3 border border-choc-900/10 shadow-sm hover:shadow-md hover:border-brandOrange-500/50 transition-all cursor-pointer flex flex-col items-center justify-between text-center group active:scale-[0.995]">
                     <div class="space-y-1.5 w-full">
                         <h3 class="font-bold text-choc-900 text-sm sm:text-base group-hover:text-brandOrange-600 transition-colors leading-tight line-clamp-2">${item.name}</h3>
 
@@ -388,7 +396,7 @@
                             ${item.veg ? '<span class="px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-800 border border-emerald-100 text-[8px] font-semibold">🌱 Vegetarian</span>' : ''}
                             ${item.vegan ? '<span class="px-1.5 py-0.2 rounded bg-green-50 text-green-800 border border-green-100 text-[8px] font-semibold">🌿 Vegan</span>' : ''}
                             ${item.gf ? '<span class="px-1.5 py-0.2 rounded bg-amber-50 text-amber-800 border border-amber-200/60 text-[8px] font-semibold">🌾 GF</span>' : ''}
-                            ${item.contains.length === 0 && !item.note ? '<span class="px-1.5 py-0.2 rounded bg-[#70584E]/20 text-choc-900 text-[8px] font-medium">Clean</span>' : ''}
+                            ${item.contains.length === 0 && !item.note ? '<span class="px-1.5 py-0.2 rounded bg-choc-900/10 text-choc-900 text-[8px] font-medium">Clean</span>' : ''}
                         </div>
                     </div>
                 </div>
