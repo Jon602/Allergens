@@ -96,9 +96,16 @@
                 <button onclick="toggleFilter('gf')" id="filter-gf" class="whitespace-nowrap px-3.5 py-1.5 rounded-full border border-cream-200 bg-white text-choc-900 font-semibold transition-all hover:border-brandOrange-500 flex items-center gap-1.5 shadow-sm">
                     🌾 Gluten Free
                 </button>
-                <div class="h-4 w-[1px] bg-cream-300 shrink-0 mx-1"></div>
-                <button onclick="toggleAllCategories(true)" class="whitespace-nowrap text-mutedBrown hover:text-choc-900 font-bold px-1.5">Expand All</button>
-                <button onclick="toggleAllCategories(false)" class="whitespace-nowrap text-mutedBrown hover:text-choc-900 font-bold px-1.5">Collapse All</button>
+            </div>
+
+            <!-- Expand / Collapse All Controls -->
+            <div class="flex items-center justify-between pt-1 text-xs text-mutedBrown px-1 font-semibold">
+                <span>Browse Categories</span>
+                <div class="flex items-center gap-3">
+                    <button onclick="toggleAllCategories(true)" class="hover:text-choc-900 transition-colors">Expand All</button>
+                    <span class="text-cream-300">&bull;</span>
+                    <button onclick="toggleAllCategories(false)" class="hover:text-choc-900 transition-colors">Collapse All</button>
+                </div>
             </div>
         </div>
     </div>
@@ -297,10 +304,10 @@
 
         let activeFilters = { veg: false, vegan: false, gf: false };
         let expandedCategories = {
-            "GELATO": false,
-            "SORBETS / VEGAN GELATO": false,
-            "HOT PUDDINGS": false,
-            "CONES & SUNDRIES": false
+            "GELATO": true,
+            "SORBETS / VEGAN GELATO": true,
+            "HOT PUDDINGS": true,
+            "CONES & SUNDRIES": true
         };
 
         document.addEventListener("DOMContentLoaded", () => {
@@ -353,7 +360,7 @@
                             <div class="h-[1px] bg-cream-300 flex-1"></div>
                         </div>
 
-                        <div class="${isExpanded ? 'grid' : 'hidden'} grid-cols-1 gap-2.5">
+                        <div class="${isExpanded ? 'grid' : 'hidden'} grid-cols-2 gap-2">
                             ${catItems.map(item => createProductCard(item)).join('')}
                         </div>
                     `;
@@ -371,17 +378,15 @@
 
         function createProductCard(item) {
             return `
-                <div onclick="openModal(${item.id})" class="bg-[#70584E]/15 rounded-[18px] p-4 border border-[#70584E]/30 shadow-sm hover:shadow-md hover:border-brandOrange-500/50 transition-all cursor-pointer flex items-center justify-between group active:scale-[0.995]">
-                    <div class="space-y-1.5 flex-1 pr-3">
-                        <div class="flex items-center gap-2">
-                            <h3 class="font-bold text-choc-900 text-base group-hover:text-brandOrange-600 transition-colors leading-tight">${item.name}</h3>
-                        </div>
+                <div onclick="openModal(${item.id})" class="bg-[#70584E]/15 rounded-[14px] p-2.5 border border-[#70584E]/30 shadow-sm hover:shadow-md hover:border-brandOrange-500/50 transition-all cursor-pointer flex flex-col justify-between group active:scale-[0.995]">
+                    <div class="space-y-1">
+                        <h3 class="font-bold text-choc-900 text-xs sm:text-sm group-hover:text-brandOrange-600 transition-colors leading-tight line-clamp-2">${item.name}</h3>
 
-                        <div class="flex flex-wrap gap-1">
-                            ${item.veg ? '<span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-800 border border-emerald-100 text-[10px] font-semibold">🌱 Vegetarian</span>' : ''}
-                            ${item.vegan ? '<span class="px-2 py-0.5 rounded-md bg-green-50 text-green-800 border border-green-100 text-[10px] font-semibold">🌿 Vegan</span>' : ''}
-                            ${item.gf ? '<span class="px-2 py-0.5 rounded-md bg-amber-50 text-amber-800 border border-amber-200/60 text-[10px] font-semibold">🌾 Gluten Free</span>' : ''}
-                            ${item.contains.length === 0 && !item.note ? '<span class="px-2 py-0.5 rounded-md bg-[#70584E]/20 text-choc-900 text-[10px] font-medium">No major allergens</span>' : ''}
+                        <div class="flex flex-wrap gap-1 pt-0.5">
+                            ${item.veg ? '<span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-100 text-[9px] font-semibold">🌱 Vegetarian</span>' : ''}
+                            ${item.vegan ? '<span class="px-1.5 py-0.5 rounded bg-green-50 text-green-800 border border-green-100 text-[9px] font-semibold">🌿 Vegan</span>' : ''}
+                            ${item.gf ? '<span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200/60 text-[9px] font-semibold">🌾 GF</span>' : ''}
+                            ${item.contains.length === 0 && !item.note ? '<span class="px-1.5 py-0.5 rounded bg-[#70584E]/20 text-choc-900 text-[9px] font-medium">Clean</span>' : ''}
                         </div>
                     </div>
                 </div>
