@@ -115,16 +115,6 @@
                     🌾 Gluten Free
                 </button>
             </div>
-
-            <!-- Expand / Collapse All Controls -->
-            <div class="flex items-center justify-between pt-1 text-xs text-mutedBrown px-1 font-semibold">
-                <span>Browse Categories</span>
-                <div class="flex items-center gap-3">
-                    <button onclick="toggleAllCategories(true)" class="hover:text-choc-900 transition-colors">Expand All</button>
-                    <span class="text-cream-300">&bull;</span>
-                    <button onclick="toggleAllCategories(false)" class="hover:text-choc-900 transition-colors">Collapse All</button>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -323,11 +313,11 @@
 
         let activeFilters = { veg: false, vegan: false, gf: false };
         let expandedCategories = {
-            "GELATO": false,
-            "SORBETS / VEGAN GELATO": false,
-            "GUEST FLAVOURS": false,
-            "HOT PUDDINGS": false,
-            "CONES & SUNDRIES": false
+            "GELATO": true,
+            "SORBETS / VEGAN GELATO": true,
+            "GUEST FLAVOURS": true,
+            "HOT PUDDINGS": true,
+            "CONES & SUNDRIES": true
         };
 
         document.addEventListener("DOMContentLoaded", () => {
@@ -417,13 +407,6 @@
 
         function toggleCategory(category) {
             expandedCategories[category] = !expandedCategories[category];
-            renderMenu();
-        }
-
-        function toggleAllCategories(expand) {
-            Object.keys(expandedCategories).forEach(cat => {
-                expandedCategories[cat] = expand;
-            });
             renderMenu();
         }
 
