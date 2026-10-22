@@ -43,6 +43,9 @@
             }
         }
     </script>
+    <!-- PDF generation (jsPDF + AutoTable) -->
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -71,6 +74,10 @@
 
             <!-- Store Info Button -->
             <div class="flex items-center space-x-2">
+                <button id="downloadPdfBtn" onclick="downloadAllergenPDF()" title="Download the full allergen guide as an A4 landscape PDF" class="px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 transition-all text-xs font-semibold flex items-center gap-1.5 border border-white/10 disabled:opacity-60 disabled:cursor-wait">
+                    <svg id="downloadPdfIcon" class="w-3.5 h-3.5 text-brandOrange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M12 4v11m0 0l-4-4m4 4l4-4"></path></svg>
+                    <span id="downloadPdfLabel"><span class="hidden sm:inline">Download </span>PDF</span>
+                </button>
                 <button onclick="toggleInfoModal()" class="px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 transition-all text-xs font-semibold flex items-center gap-1.5 border border-white/10">
                     <svg class="w-3.5 h-3.5 text-brandOrange-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
                     <span>Store Info</span>
@@ -525,6 +532,205 @@
 
         function handleModalBackdropClick(e) {
             if (e.target.id === "allergenModal") closeModal();
+        }
+
+        // ------------------------------------------------------------------
+        // PDF EXPORT (A4 landscape allergen matrix)
+        // ------------------------------------------------------------------
+        const PDF_ALLERGENS = ["Gluten", "Egg", "Milk", "Tree Nuts", "Peanuts", "Soya", "Sulphites"];
+
+        // Map the free-text allergen wording used in productsData onto the matrix columns
+        function allergenKey(text) {
+            const t = text.toLowerCase();
+            if (t.includes("peanut")) return "Peanuts";
+            if (t.includes("gluten") || t.includes("wheat")) return "Gluten";
+            if (t.includes("egg")) return "Egg";
+            if (t.includes("milk")) return "Milk";
+            if (t.includes("soya")) return "Soya";
+            if (t.includes("sulphur") || t.includes("sulphite")) return "Sulphites";
+            if (t.includes("nut") || t.includes("almond") || t.includes("hazelnut") ||
+                t.includes("pecan") || t.includes("pistachio") || t.includes("walnut")) return "Tree Nuts";
+            return null;
+        }
+
+        // miogelato logo embedded so the PDF always has it (no file/CORS issues)
+        const PDF_LOGO = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABjCAYAAABt56XsAAABRmlDQ1BJQ0MgUHJvZmlsZQAAKJFjYGASSSwoyGFhYGDIzSspCnJ3UoiIjFJgf8zAzcDKwMagyyCQmFxc4BgQ4ANUwgCjUcG3awyMIPqyLsgsye6EvLvvvAX3rBAqSWXwXo6pHgVwpaQWJwPpP0CcllxQVMLAwJgCZCuXlxSA2B1AtkgR0FFA9hwQOx3C3gBiJ0HYR8BqQoKcgewbQLZAckYi0AzGF0C2ThKSeDoSG2ovCPA4JqcWKbgbmZt7YPEehaAktaIERDvnF1QWZaZnlCg4AkMpVcEzL1lPR8HIwNCSgQEU5hDVn2+Aw5JRjAMhllPJwGCxhIGBaTpCLOkhA8PWbQwM/FEIMfUaBgbBZQwMB20KEosS4Q5g/MZSnGZsBGFzb2dgYJ32///ncAYGdk0Ghr/X////vf3//79Afcy3GBgOfAMA7PZflfa/EX0AAAD2ZVhJZk1NACoAAAAIAAcBEgADAAAAAQABAAABGgAFAAAAAQAAAGIBGwAFAAAAAQAAAGoBKAADAAAAAQACAAABMQACAAAAEwAAAHIBMgACAAAAFAAAAIaHaQAEAAAAAQAAAJoAAAAAAAAASAAAAAEAAABIAAAAAVBpeGVsbWF0b3IgUHJvIDQuMAAAMjAyMjowNDoyNyAyMToyMjozOQAABJAEAAIAAAAUAAAA0JKGAAcAAAASAAAA5KACAAQAAAABAAAAZKADAAQAAAABAAAAYwAAAAAyMDE5OjExOjA1IDA2OjU1OjE0AEFTQ0lJAAAAU2NyZWVuc2hvdJmBuGgAAAAJcEhZcwAACxMAAAsTAQCanBgAAA7FaVRYdFhNTDpjb20uYWRvYmUueG1wAAAAAAA8eDp4bXBtZXRhIHhtbG5zOng9ImFkb2JlOm5zOm1ldGEvIiB4OnhtcHRrPSJYTVAgQ29yZSA2LjAuMCI+CiAgIDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+CiAgICAgIDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiCiAgICAgICAgICAgIHhtbG5zOnBob3Rvc2hvcD0iaHR0cDovL25zLmFkb2JlLmNvbS9waG90b3Nob3AvMS4wLyIKICAgICAgICAgICAgeG1sbnM6ZXhpZj0iaHR0cDovL25zLmFkb2JlLmNvbS9leGlmLzEuMC8iCiAgICAgICAgICAgIHhtbG5zOlBpeGVsbWF0b3JUZWFtPSJodHRwOi8vd3d3LnBpeGVsbWF0b3IuY29tL3htcC8xLjAvbmFtZXNwYWNlIgogICAgICAgICAgICB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIKICAgICAgICAgICAgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIKICAgICAgICAgICAgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyI+CiAgICAgICAgIDxwaG90b3Nob3A6SUNDUHJvZmlsZT5BY2VyIEcyNzdITDwvcGhvdG9zaG9wOklDQ1Byb2ZpbGU+CiAgICAgICAgIDxwaG90b3Nob3A6Q29sb3JNb2RlPjM8L3Bob3Rvc2hvcDpDb2xvck1vZGU+CiAgICAgICAgIDxleGlmOlBpeGVsWURpbWVuc2lvbj45OTwvZXhpZjpQaXhlbFlEaW1lbnNpb24+CiAgICAgICAgIDxleGlmOkNvbG9yU3BhY2U+NjU1MzU8L2V4aWY6Q29sb3JTcGFjZT4KICAgICAgICAgPGV4aWY6VXNlckNvbW1lbnQ+CiAgICAgICAgICAgIDxyZGY6QWx0PgogICAgICAgICAgICAgICA8cmRmOmxpIHhtbDpsYW5nPSJ4LWRlZmF1bHQiPlNjcmVlbnNob3Q8L3JkZjpsaT4KICAgICAgICAgICAgPC9yZGY6QWx0PgogICAgICAgICA8L2V4aWY6VXNlckNvbW1lbnQ+CiAgICAgICAgIDxleGlmOlBpeGVsWERpbWVuc2lvbj4xMDA8L2V4aWY6UGl4ZWxYRGltZW5zaW9uPgogICAgICAgICA8UGl4ZWxtYXRvclRlYW06U2lkZWNhcldyaXRlckRldmljZT5NYWMxNiwxMzwvUGl4ZWxtYXRvclRlYW06U2lkZWNhcldyaXRlckRldmljZT4KICAgICAgICAgPFBpeGVsbWF0b3JUZWFtOlNpZGVjYXJXcml0ZXJQcm9jZXNzSUQ+OTQ2NzU8L1BpeGVsbWF0b3JUZWFtOlNpZGVjYXJXcml0ZXJQcm9jZXNzSUQ+CiAgICAgICAgIDxQaXhlbG1hdG9yVGVhbTpTaWRlY2FyRW5hYmxlZD5UcnVlPC9QaXhlbG1hdG9yVGVhbTpTaWRlY2FyRW5hYmxlZD4KICAgICAgICAgPFBpeGVsbWF0b3JUZWFtOlNpZGVjYXJXcml0ZXJWZXJzaW9uPjQuMDwvUGl4ZWxtYXRvclRlYW06U2lkZWNhcldyaXRlclZlcnNpb24+CiAgICAgICAgIDxQaXhlbG1hdG9yVGVhbTpTaWRlY2FyV3JpdGVyT1M+MjcuMC4xPC9QaXhlbG1hdG9yVGVhbTpTaWRlY2FyV3JpdGVyT1M+CiAgICAgICAgIDxQaXhlbG1hdG9yVGVhbTpTaWRlY2FyV3JpdGVyQXBwbGljYXRpb24+cGl4ZWxtYXRvclBybzwvUGl4ZWxtYXRvclRlYW06U2lkZWNhcldyaXRlckFwcGxpY2F0aW9uPgogICAgICAgICA8UGl4ZWxtYXRvclRlYW06U2lkZWNhckRhdGFWZXJzaW9uPjM8L1BpeGVsbWF0b3JUZWFtOlNpZGVjYXJEYXRhVmVyc2lvbj4KICAgICAgICAgPFBpeGVsbWF0b3JUZWFtOlNpZGVjYXJMb2NhdGlvbj5pQ2xvdWQ8L1BpeGVsbWF0b3JUZWFtOlNpZGVjYXJMb2NhdGlvbj4KICAgICAgICAgPFBpeGVsbWF0b3JUZWFtOlNpZGVjYXJTaG9ydEhhc2g+NUNBOEZDNEE8L1BpeGVsbWF0b3JUZWFtOlNpZGVjYXJTaG9ydEhhc2g+CiAgICAgICAgIDxQaXhlbG1hdG9yVGVhbTpTaWRlY2FyVmVyc2lvbj4yPC9QaXhlbG1hdG9yVGVhbTpTaWRlY2FyVmVyc2lvbj4KICAgICAgICAgPFBpeGVsbWF0b3JUZWFtOlNpZGVjYXJXcml0ZXJQbGF0Zm9ybT5tYWNPUzwvUGl4ZWxtYXRvclRlYW06U2lkZWNhcldyaXRlclBsYXRmb3JtPgogICAgICAgICA8UGl4ZWxtYXRvclRlYW06U2lkZWNhckJhc2VGaWxlbmFtZT5taW8tY2lyY2xlPC9QaXhlbG1hdG9yVGVhbTpTaWRlY2FyQmFzZUZpbGVuYW1lPgogICAgICAgICA8UGl4ZWxtYXRvclRlYW06U2lkZWNhclVUST5jb20ucGl4ZWxtYXRvcnRlYW0ucGl4ZWxtYXRvci5kb2N1bWVudC1wcm8tc2lkZWNhci5iaW5hcnk8L1BpeGVsbWF0b3JUZWFtOlNpZGVjYXJVVEk+CiAgICAgICAgIDxQaXhlbG1hdG9yVGVhbTpTaWRlY2FySWRlbnRpZmllcj41Q0E4RkM0QS1DNUIxLTQyREEtQkFBMS1CMTQzNDAzNDY4NUM8L1BpeGVsbWF0b3JUZWFtOlNpZGVjYXJJZGVudGlmaWVyPgogICAgICAgICA8UGl4ZWxtYXRvclRlYW06U2lkZWNhcldyaXRlckJ1aWxkLz4KICAgICAgICAgPHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD54bXAuZGlkOjc1NmFhZDI0LTZmNmQtNDFkZS05ZjgwLWI3YmQ2OWQ4MTMzZjwveG1wTU06T3JpZ2luYWxEb2N1bWVudElEPgogICAgICAgICA8eG1wTU06RG9jdW1lbnRJRD54bXAuZGlkOjc1NmFhZDI0LTZmNmQtNDFkZS05ZjgwLWI3YmQ2OWQ4MTMzZjwveG1wTU06RG9jdW1lbnRJRD4KICAgICAgICAgPHhtcE1NOkhpc3Rvcnk+CiAgICAgICAgICAgIDxyZGY6U2VxPgogICAgICAgICAgICAgICA8cmRmOmxpIHJkZjpwYXJzZVR5cGU9IlJlc291cmNlIj4KICAgICAgICAgICAgICAgICAgPHN0RXZ0OnNvZnR3YXJlQWdlbnQ+QWRvYmUgUGhvdG9zaG9wIEVsZW1lbnRzIDIwLjAgKE1hY2ludG9zaCk8L3N0RXZ0OnNvZnR3YXJlQWdlbnQ+CiAgICAgICAgICAgICAgICAgIDxzdEV2dDpjaGFuZ2VkPi88L3N0RXZ0OmNoYW5nZWQ+CiAgICAgICAgICAgICAgICAgIDxzdEV2dDp3aGVuPjIwMjItMDQtMjdUMjE6MjI6MzkrMDE6MDA8L3N0RXZ0OndoZW4+CiAgICAgICAgICAgICAgICAgIDxzdEV2dDppbnN0YW5jZUlEPnhtcC5paWQ6NzU2YWFkMjQtNmY2ZC00MWRlLTlmODAtYjdiZDY5ZDgxMzNmPC9zdEV2dDppbnN0YW5jZUlEPgogICAgICAgICAgICAgICAgICA8c3RFdnQ6YWN0aW9uPnNhdmVkPC9zdEV2dDphY3Rpb24+CiAgICAgICAgICAgICAgIDwvcmRmOmxpPgogICAgICAgICAgICA8L3JkZjpTZXE+CiAgICAgICAgIDwveG1wTU06SGlzdG9yeT4KICAgICAgICAgPHhtcE1NOkluc3RhbmNlSUQ+eG1wLmlpZDo3NTZhYWQyNC02ZjZkLTQxZGUtOWY4MC1iN2JkNjlkODEzM2Y8L3htcE1NOkluc3RhbmNlSUQ+CiAgICAgICAgIDx4bXA6Q3JlYXRlRGF0ZT4yMDE5LTExLTA1VDA2OjU1OjE0WjwveG1wOkNyZWF0ZURhdGU+CiAgICAgICAgIDx4bXA6Q3JlYXRvclRvb2w+UGl4ZWxtYXRvciBQcm8gNC4wPC94bXA6Q3JlYXRvclRvb2w+CiAgICAgICAgIDx4bXA6TWV0YWRhdGFEYXRlPjIwMjYtMTAtMTdUMjA6NTc6MzYrMDE6MDA8L3htcDpNZXRhZGF0YURhdGU+CiAgICAgICAgIDx4bXA6TW9kaWZ5RGF0ZT4yMDIyLTA0LTI3VDIxOjIyOjM5KzAxOjAwPC94bXA6TW9kaWZ5RGF0ZT4KICAgICAgICAgPHRpZmY6UmVzb2x1dGlvblVuaXQ+MjwvdGlmZjpSZXNvbHV0aW9uVW5pdD4KICAgICAgICAgPHRpZmY6WFJlc29sdXRpb24+NzIwMDAwLzEwMDAwPC90aWZmOlhSZXNvbHV0aW9uPgogICAgICAgICA8dGlmZjpZUmVzb2x1dGlvbj43MjAwMDAvMTAwMDA8L3RpZmY6WVJlc29sdXRpb24+CiAgICAgICAgIDx0aWZmOk9yaWVudGF0aW9uPjE8L3RpZmY6T3JpZW50YXRpb24+CiAgICAgIDwvcmRmOkRlc2NyaXB0aW9uPgogICA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgo1461gAAAXSklEQVR4Ae09CXRURbb3vX69d3aybxAIBKLEEHYRwhZFxWX8MDM634PLwcFB1JkR/3ccB///85UZcZh/xn/E74I6jo7BBVBQiBLWgBCWsCOQEBKSkIX0kvT2ln/r4Ws6yUvn9etOSMA6J6n3qm7dunXvq7q3bi1NwQAJgiBQ06dP1xhrajSt8S56ZHwmEz8kN+bihfMWluVoqRkJKen25tpm68mGfe7oRgN/MSqKnzt3Lrds2TJegunPMdVfiVuwoNBQf9w2vM3pGMWxbA5QQhbPC3EomBiapmIEXjBRNG0BAbTYBl87KAq8PMe1A023YZ4V3y9hbhMNdDWj1Z5idMyR2MHxx4uLSx39se2+hvQH4vArZnZ9/fl4Z1v7Q6zXcyfHcQk/MDtcdAqknTRN27Q6XYnRZHkrxRC1ZXVpqas/tJ/QEK6GqmoPGYZunZA32NXuGs8K3AyB52ajEDIRmW8IUoVYeSGB1mgaGJr5FmiqRM/o9twSFX9qWWkpqxxFeCGvmkDumDhmZKvDuoRlvbNwaElB4ZjC27QgsVGUmwKqTsPQeyyRUf+zqezgriAxhAW8TwUyb9IkY5P70ijWyz3h9rjvB0Eg439/DLxOp9+s0WiWR1kG7Vu3c6e9r4jsE4EUFhYyjKNpSnt72yMcxxcJAk90Q78PFEVZUShbGS3zblZM6oa+0DW9PlavWrVKyzXX/MVut33JsuwvBoowyNeCw2gU0nyXy+n+6ExTzd/vKSyM7u2vqNd6yNyCApPVY73X62Wf53gup7cb0hf40TprYHS6l8zmQe9/XVbW0ht19opA5hROSLM2Nq7E+QMOT0JEbxB+tXCi4nfRjOY7c1TkUyVlhw6Emw5NOBHiPIKG1vppjlbrGo5jpyBufTjx9xNcjMDzmR63++7s1MSaorTBp8rr6sLmBQhbDykaPdrsBOfjXo/nKZ7nU/oJ83qVDIqibdhb3oqOjXpp4/YDjeGoLCw9hJizre7WFfjVLCWKMByEDQwcgh57y0Svx5tbkJu54URVfcgz/pAFcuekvNQGW/OrOMFbgH4JZmAwMqxUUjgiZDud7IThaSl7K+sbQ+opIQnk9sn5ma1W6xtoGt6HTQwJV1hZ1PfIiFCGcDw7KWdw5t6zFxrq1ZKgmolzJkyIdLS1vuHxeu/AysOmi9Q2pD+Uw+E6meO8E/JuHPnFqcoaVbN7VYycnZ+f0uaxrmJ/FIbsd4Cz+wN6rfHB0orjR2QBAiQG3UPmzsUJX3PrKyiM+YhXlUAD0HNNZJGeIlD8sOFDhm+srK11BtOooAQyb948TePpqqe9Xu+TWMn1qMAV8xZ1ShZwnpishJTSqsZGj9KCQQkkXsstQNP2ZXTyGJVWoAQOnXgQExMNqekZkJKaColJSWCJiATO6wW3R3FblFQFJqMRUtLTIT0jExISkyAqJha7uQAel5v4rhThUAhE8QKXh6YOPXTU6G1VVVWKJo+Kv/LZ+TeMtbXb/gOJNiskSBYMeQ9GoxliBw2C8ZMmw5TpMyE3bwxExw6ShW+sr4V9u3fBlq83wJGKCrC2XgK06mRhOyei7wkio6Iha9hQmDXnThg/eQqkD8nuDCa+t9ltcPLoYdi17VvYubUULqKh1OZwhCQklC+DK5+LqJaa3VjJetmKOyUq0gELFy7UHtmxeQ0yYi6WV1SmUz3iqxG/zplz7oDC2bdB3pixEBkdKwfWbVptdRWUbS+FTV+shSOHDgKuLsrCkh6XNSwbbp17N9w8bSYMHTESSJrS4HK2w5GD+2H7t5vhq/WfQ+ulS0qLysLhquT+5JSEos+++a5ZFsAvURGVMwpy/81ht/0Ry6l212ePyIEX//xXyMgaBlqt1o+EIB/xs3M47PDph+/Bayv+JFv4vp/dD48u+Q3EYK8LRhCdkaFzFFqaG+Gl55fCzm1bO2cH8y5o9fr1Oyp+cS9FBd790qMOKSzIndLmsL+DtSse3vwpRRMQ7rpvPryw/FUcuzOBvIcU8EvX6fWQVzAexk2cCN8fPwaXWprFoSUVdcNvn18GDz62GEwmS0jCIDSSIc9siYApM2Yj3TScOHYE0LpUQz6FO2FGvPfWiTMPL2o+UlqKSqubEJA7hTfdFO122Zejvya3m/IBkxmGgcd/vRQeenwJjuUxAWHVZCalpkP+uPHi2K/T6VDoK1AnFYUsiM604HIufgDjIAMNgb1lO8Cj1tAQhNSGM4lfnq1v7nbSGFAgGUmRM/CL+B0SGHTvID3hgYcfhYcWLQG93tC5jWF7j46Ng+lFt8G0mUUwInd02PB2RkTak5U9AiwWs2hkdKe/Opfzf0eDKEWj1Z6vqm/e45/u/9ytQObNK7S01jW/h/Z0un8Bpc+TbpkGi5c+DyazRWkR1XBE4MR87e0gGgvDR4AdLb2jFYfUVEehIPNvHD7ss9Pn62QthW6VdMPp+sdIYTW1xsTGwgsvr0ClGqemeL8uYzAYxQ/thrw8VXTiB55os7f+HnuLrEElKxDiUve0Ox/FGmULBaKEWFCLnn4GYuLiA4EN6DxiVDz25DM4eVW3Os16vEUzCkaOkWOCrECsDsdslOBguQI9pQ3DLj1p6oyewAZ8fm5ePtxUMFZdOwQhAT0Qd2LhLh98F2VN9lCxTdX/IoCgShNPmloICUnJignFbUHQ0tQIWzd/JU7EzlWeAZ5jIX1wFky4eSrMvuNuiEtIAmKxhRJ4ngNbaytsLdkI278pgcrTJ8UZfyqa4hOmTIVZWE9SSppis5yYw0VYZkfplqDJQptXg5br/MLCwctLS6s6rDJ2kVDRpIIca8vFvTj/ClobE6X3wdqvxJmxEirdLid8+tH7sOaD96Cmulq2CNFH98z7OSxY9AQYjOp2m+K4DcXvvw3/fO8dqK05L1tPHLpy7rx3Htz/8EJ04yjTfXZbK9w3eyq6c1plcfaQyEdGRs4v2Xf0E3+4LlZWSmzEf6OLZJI/kNLn4Tk58PDjTymaB3i9HvjfFS/D6tdfC+iacDmdcBjdGMcqDqB5ezvgkQKl5FyGwy9rxX89D++/uSpgPc72drGe2vNVMHHKNHHy2VNFxLqrqzkHx48c7glULp/ieH7kI796clVpaalvothBIPcWTU5obWl5C+eRQbb6cn0/fXAB3DRuolzlXdJKvlwLb/5tpaJJFuozuFBbA1octvLGjBNn0F0QyiSQcl+t/QRW/fVVRQ5JAl9dVYnzJj3kj1fWDjPOS774dI1M7T0nEYur7tyZDZUXGmsl6A5K/VJDcxE5CCNlBhtPKZylqAgZz9994zVw4tevNJBhZ+O6T6Gp8aLSImCztsL6Tz7u1gkph4hM+D589y1oUVhP9sgbAIceOVSK0lwu5+0I6FMdPoEsQ2WO6+OqzaOICAukZgxWRMSB78rgzPffK4L1Bzp/7hwcObDXPyngc2NDnTgMBQSSybRZrbC2+B8yOV2TtFodpKSldc1QmCJw/KRZswp8EvUJ5Bt7Qzwv8CMV4ukCFo+LPXjErEu6XMLu7aVyyYrS9uzcpgiOAFWUf6doSJRDuH1LiVxylzTigIxPVG5VdkaAw2S286IjSUr3cVBw4fExQciSMoKNo2Pi8BCSD13A4pVnTgfMD5R5rrIyUHaHvHOVVR3eg3lpqKsDr8fdYxHyEUbFqHec4rnJNINOmyFV5DPu9UZttsfmlF+2k6ADxEaTWZF1RVC0tzkCYAqc5fEod387HLbAyALk2m02+NOy53BZOROG4GJXcloGJCWn4KJaR+YTUz80f52g9bg9U5CUzYQcn0DcTjcxdZV94qRkp0DWC/pb8Lpdqklyu92w7pNisTwZlmLj4iAzayhMxbWRu3Be5C8EBj3BoQTcYHezVN7HRVyQHyclXq+xBm0dHS2AQXP5T4+xlnAIvQlNuEO0fM9u+MtL/wkP3jsHTp84iiO8on0LPbITZ+0FH+OOHgIo9hA8RsB89dHq3ltM6JGkqwsQZ+ChIIGF3DgvZETyEKPngQjHi/xudtFw1qqBw01aKL/IgJOlgFh7Ty1cAL/53TKYNntOyMSjqR1dbGscgohOiwIp+2Z9PM4NfKZXyDUMEASE6UWZHngktx3ijDyQHiEXJuPhCifrglqHBlbuN8PBRgYaGxrg5T88BxmDkY+oR0INaESMQhynxSGL83gz8SV0rKFS1YfljYwAj97ghGfHOiDFwnUrDEISYYwJ4bOjWVg+xQb3DHOL8GQ3yrOLHwNXCEaK1GRaQ2WTZ7GHcG53opRxPcQGZO6vx7TDrZkuYHxa9HLLOewkjU4aXDg0EaHFY8+h/T5Vi06Ap/LbIAHT3zlmFJ2VbSXdLpErZifucBlMgEWBUBr62l1N6sQSwtt7h7rhtsEuUU9I2R6Ogo1VenjvuBHq2q5IiTD+oVwnwl/uFQRei4p//nAnnGjRwNZaHbS0tEhoVMc4nxFPnYk1u9tdHY1r1WiVFcTtqMoAewEq0cTD3UM7CqMeBfD8rgj4c7m5gzBI9Rext7yC6X8os4g9RyKJ9J4FKKju9I4EpzRGnogyEAViMFtUTwiVVugP5wlhfuCPR83zrAwPpEdc2fHo5SlYtjsCdtZpgZfX6UCGse3YE36PQmvHoUwKw2NYuH1wePYe4+5G0agSBaLRUDqpkms5JlbVXdg7JJYS/q/53gAVTQzOKQK3nGQfa2Fg0zm9b5cbwfPzHGcXPRQYk3wuzvjFE8tXBkt5uGsqlfSMNLSopGD30LC1Rvm3yOK8ZE+9VlT4Eg6i9FPM4ZkgEpzXlUCGRl0RBmn8xXa6g14gaT2FSpwkksmhFGhKgCRTR7xSnppYFAjH8spXitTU0k/KRKLJ6h+IPvBnrn9ed8+tblqcwUv5RDQRnfBKecHE6IYRLR1RIG1t9qZgCg9UWAq/Zv9A9EbHFP9c+WcybPnrGzJJD4elxbGcldQoCgR3c4gv8iRcO6lksucfyAQxHMwMg+cE9AaDeHZEFIjAeZUvVPu3aIA9n7N3dJMPQoVMHIn9IeBMXdzoIAokIiq6oT8Q1ds0nESz1b+XEC/vDXFsb1erCL/BYKghgKJAtEZdFT4HO5yS8gMqsNjCLys7XlD0QI4LJ4pXv5ewPHuMMFMUSN7koiYNo1G1/W5ASQSJ/eyMAaxoKUkhyczBixPtiuYSHTWQhCE8cXJiynGCSaQMF6h49OkfCg/q/o2lBvVISbWug6WUE8vCH2+2w+hBLETrBZ/TkShr4nYnE8qHRjlhTpjcJJ05pKE1jR9u3HKOpIveXvKgpbV7OGALybOaQBb7B0Lw4Oj0j5NGGIlCGOWnP0agX2ploQ09uAxccNDg8NKgwwUromeyozlIxMnf8n1Bb3dWxBL0Y+1D/okqwycQPPNQ5nI7SaIqzoonaweIUIh7fXFpJLw+wwbEQSgFspZ+U7wX/6SUvok1DLNLqsk3mHrcbWdxd8V1YW2RxhNr69kdEbDurAEcHmXfIJkQykFy8oehJB4HjLFnuHDIKpOAfAIxUBYijDNSxvUQN6Ava+V+Ezy9LRLWo2C6c6MQd8nHp4ywo04HZDLpv4JIhNSmfKtYF7biNYHnOcFVLWX4hqyoESOaHUf3HcVNzb49QhLQtRy7cKXwaDMj/pGFKKJbiBIn+oN4g6vRCCC7TojLhISRsWT9/fIz+Y/WUAer7UqOsidUHSejzcl44dlZsYBPIMXFxVxhfu5mlrUtVIbq2oMi237I2gj5kwtkuCICM2l/kA6+c/h4vpMHQK5sd2kaLbMbrzL3beX0DVmkwPBhyZvJvbTdFb7e04nfa0a65/LmuR+YcbBRC5fwGn+1waCzbMCyooVFcHQQyBvFJVa9wfi6WuTXcjkyH1kwygX5CVcUhhuHu7ePGFU3W8vodi9cOrzCH0EHgZCMmOjIV9HaUr9L2R/7NfKchBsjnh3bBg/ktHewsjbjci5Z1lUZeHNMxAvz5xd3WN3qgk2XuPcC3TRkMyr3+1RWNGCKpVl4cd+VHMFkEIpHQYxL9ML0dLe4R8sfrsqmgY9OGa6MNf6ZCp7xVHFFs0tT2hm0i0CKi4GbMpr5BDj2NqwtpMvKOlfW397nZbtgHu6vCjYQJb4CLTKynKsqUMDSFPVReXn5lVnpD4i6DFkkPT4+ZhMq98t2mKoar91CFajEn9gSiRuvtap7B/klH73OuB655FPmEsdkBUJuPtMbDSsQ6Ip9J5W4DmMyMTyAglh5wAy/3R4hbp4LhQ04XK255e55J+RwdBmyJKCs6JR/nvJUP4JXiN8ipV1r8XcN2m5n5+TTdXgp3PFOi7sZ69s1OAFUb95KvEODqTYuKX656GGXEv3igDXMLMid7nA41uKOiB5vWTGZTTAIb0OQ9/b41YiP9Xh+T+0lYOSisqTk5I4Iu3lrxis72trau8m9GsmU12wxLd6y/8Qb3dXebQ8hBVwGdp/GSa9jWf6B7hBI6e3Y8Oq2aum112IiyGo8MDMQAx7726VldZ8Hol1Wh0gFdu48aY+Oil2OqqeDrSzl/xgHxwG9XrdyU0VFY6BSAQVCCm4oKz9sjrQswaHo6m1ZD9SCgZHH6/S6VfHZebKWlX8TehQIAc4G0/8xjIYcSe1ipvkj+/FZngMaDbMjwjRoKXHgykNcSVU0syG/sTQ0M/l7vPobLzaDuCvFf3zqiQO43nHRaNQt2byvQtbM7VxeUQ8hhbbsPXbUaLA8gytc18Uux86MUvOOK9qszmh4KZuO2Ka0vGKBkEX4aQePrTeaTeRCrPCcUlFK5cCEEwwG06ua6OS/vVFefsVF3ENbFA1ZEo5S1CE3pmSe8vCeCHQ+TsD0gPMYqdx1GAt4t9caVtD/+469e9uCaX9QAiGIT9XVeUcNy9nL8+4EPPBO7kr9USidOI6ukR2G6OhF2/dX4NJscCEkZk4aNeRj3CT8E6wyaMEGR+aAgebRNbI7Z+KQmatXl6paeQ2JkekpCbtwB0Y83tUxGlkWknAHDMsDEMpomBK9Vrfo803lQfcMCW1IAqlpaLYnZgzdZNZCJN4RP/56FgpuNPwqJS3x/g27Dp2XmKsmDkkgpMI61CmjUzO3eSkvdhR+DCYpP0WphuL+VoaivLhzZHVMtPmXn28pl73PPRiSQxYIqYwo+glDc3a7gT2OQpmI19ZFBUPEQIXFqUCr0WR8DiKNr3yz43DIwiB8CPu4f+v4/Dyb/dJqtMCIXlE8zxlgQhHwKoxzESbLL0v2H/06nLSHpYf4E3Smtr7hpuzMLzxevP8AL3jEf9fUujy6Quz4WyIfGfWmxd8ePObbk+vPg1Cew95DJGIKCgq0kbRnssthe5Pj+GFS+kCO0aRtxMOZv0owxn5RXFYW/O4IBY3vNYFIdS+cO9d04tzxpW63919x5XEIpvd6nVLd4YpRV9TRGmZtUtqwP3y2aVOvHpDtE+YU4iXNfHP9SLzX8ade1vMwmmPK1mDDxVGVeFAQNjz38iGj0602JnoPbNx4utfXhPpEIP78uHvquPRWq+1FvGb8J/gLmxZcYAm7HvOvT8Uz2dDuxG2e28xRMUs37dp3FHH02TpQnwtEYtCcCfmj7A7rXZwgzOI5frySjRRS2d6IsTe4UEccomhNicFoWPfN3iN7Ma3PBCG16aoJhBCwbBnQO9YXRFC0a4jb4/0ZbmC4H3/vLw2z+owuWkM344reGqPe8HdBwx2PzbyxVcnKnsTAcMd91nAlhC8oLDTUtjVPcHlct3vdXuw1AuoaAfcWCVG4Uhlwh0xP+LGhePKMsuOiURPuHLzIMNpDep1hQ2Za1ta3162z91S+r/L7lUD8Gz0XrbO2C8eTWQ+VimfIkr0sOwQdmcMooDPwB2cScC4Qj5v4IlFoxFXzg7tGYMniGY7/dp5nm2iaIcf0alCgZ9AlXulluVq9hqlNSY2u+2Djnn65w7/fCsRfOIGet2zZwqSlpYmGgdVq5ceOHat4dS4Q3quV9//0QEzkqoA6YwAAAABJRU5ErkJggg==";
+
+        function loadLogoForPdf() {
+            return Promise.resolve(PDF_LOGO);
+        }
+
+        async function downloadAllergenPDF() {
+            const btn = document.getElementById("downloadPdfBtn");
+            const label = document.getElementById("downloadPdfLabel");
+            if (!window.jspdf || !window.jspdf.jsPDF) {
+                alert("The PDF tool is still loading or could not be reached. Please check your connection and try again.");
+                return;
+            }
+            btn.disabled = true;
+            label.textContent = "Preparing…";
+
+            try {
+                const logo = await loadLogoForPdf();
+                buildAllergenPDF(logo);
+            } catch (err) {
+                console.error(err);
+                alert("Sorry, the PDF could not be created. Please try again.");
+            } finally {
+                btn.disabled = false;
+                label.innerHTML = '<span class="hidden sm:inline">Download </span>PDF';
+            }
+        }
+
+        function buildAllergenPDF(logo) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+            const PW = 297, PH = 210, ML = 10, MR = 10;
+
+            const C = {
+                choc: [56, 40, 32], creamLine: [229, 222, 213], cream: [246, 243, 238],
+                orange: [232, 122, 40], orangeDark: [214, 106, 27], orangeLight: [255, 247, 240],
+                amber: [253, 230, 180], text: [56, 40, 32], muted: [120, 100, 90],
+                contains: [190, 24, 60], green: [22, 140, 90], white: [255, 255, 255]
+            };
+
+            const dateStr = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+
+            const drawCheck = (cx, cy, color) => {
+                doc.setDrawColor(...color); doc.setLineWidth(0.5); doc.setLineCap("round");
+                doc.line(cx - 1.3, cy + 0.1, cx - 0.4, cy + 1.0);
+                doc.line(cx - 0.4, cy + 1.0, cx + 1.4, cy - 1.1);
+            };
+            const drawContains = (cx, cy) => { doc.setFillColor(...C.contains); doc.circle(cx, cy, 1.55, "F"); };
+            const drawMayContain = (cx, cy) => {
+                doc.setDrawColor(...C.orange); doc.setLineWidth(0.55);
+                doc.setFillColor(...C.white); doc.circle(cx, cy, 1.35, "FD");
+            };
+
+            // ---- Header band (compact) ----
+            doc.setFillColor(...C.choc); doc.rect(0, 0, PW, 14, "F");
+            doc.setFillColor(...C.orange); doc.rect(0, 14, PW, 0.9, "F");
+            if (logo) {
+                doc.addImage(logo, "PNG", ML, 2.5, 9, 9);
+                doc.setDrawColor(255, 255, 255); doc.setLineWidth(0.25); doc.circle(ML + 4.5, 7, 4.5, "S");
+            } else {
+                doc.setFillColor(...C.orange); doc.circle(ML + 4.5, 7, 4.5, "F");
+                doc.setFont("helvetica", "bold"); doc.setFontSize(9); doc.setTextColor(255, 255, 255);
+                doc.text("m", ML + 4.5, 8.8, { align: "center" });
+            }
+            doc.setFont("helvetica", "bold"); doc.setFontSize(13); doc.setTextColor(255, 255, 255);
+            doc.text("miogelato", ML + 12, 7);
+            doc.setFont("helvetica", "normal"); doc.setFontSize(7); doc.setTextColor(...C.amber);
+            doc.text("Allergen & Dietary Reference Guide", ML + 12, 11.2);
+
+            // ---- Key (right side of header) ----
+            doc.setFont("helvetica", "normal"); doc.setFontSize(7);
+            const keyItems = [
+                { txt: "Contains", draw: (x, y) => { doc.setFillColor(...C.contains); doc.circle(x, y, 1.55, "F"); } },
+                { txt: "May contain (traces)", draw: (x, y) => { doc.setDrawColor(...C.orange); doc.setLineWidth(0.55); doc.setFillColor(...C.choc); doc.circle(x, y, 1.35, "FD"); } },
+                { txt: "Suitable (Veg / Vegan / GF)", draw: (x, y) => drawCheck(x, y, [110, 220, 160]) }
+            ];
+            const ICON_W = 3.2, ICON_GAP = 2.2, ITEM_GAP = 7;
+            const keyWidths = keyItems.map(k => ICON_W + ICON_GAP + doc.getTextWidth(k.txt));
+            let kx = PW - MR - (keyWidths.reduce((a, b) => a + b, 0) + ITEM_GAP * (keyItems.length - 1));
+            keyItems.forEach((k, i) => {
+                k.draw(kx + ICON_W / 2, 7.4);
+                doc.setFont("helvetica", "normal"); doc.setFontSize(7); doc.setTextColor(255, 255, 255);
+                doc.text(k.txt, kx + ICON_W + ICON_GAP, 8.3);
+                kx += keyWidths[i] + ITEM_GAP;
+            });
+
+            // ---- Allergy notice ----
+            const ny = 18.5;
+            doc.setFillColor(...C.orangeLight); doc.setDrawColor(...C.orange); doc.setLineWidth(0.4);
+            doc.roundedRect(ML, ny, PW - ML - MR, 8, 2, 2, "FD");
+            doc.setFont("helvetica", "bold"); doc.setFontSize(7); doc.setTextColor(...C.orangeDark);
+            doc.text("IMPORTANT ALLERGY NOTICE:", ML + 4, ny + 5);
+            const lw = doc.getTextWidth("IMPORTANT ALLERGY NOTICE:  ");
+            doc.setFont("helvetica", "normal"); doc.setTextColor(...C.text);
+            doc.text("Please inform our team of any severe allergies prior to ordering. Cross-contamination risks may exist in preparation areas.", ML + 4 + lw, ny + 5);
+
+            // ---- Two side-by-side tables ----
+            const categories = ["GELATO", "SORBETS / VEGAN GELATO", "GUEST FLAVOURS", "HOT PUDDINGS", "CONES & SUNDRIES"];
+            const halves = [[categories[0]], categories.slice(1)];
+            const TW = 135, GAP = 7;
+            const startY = 30;
+            const HEAD_H = 15;
+            const headLabels = ["Veg", "Vegan", "GF", ...PDF_ALLERGENS];
+
+            const columnStyles = { 0: { cellWidth: 38, halign: "left", fontStyle: "bold" }, 1: { cellWidth: 9 }, 2: { cellWidth: 9 }, 3: { cellWidth: 9 } };
+            for (let i = 4; i <= 10; i++) columnStyles[i] = { cellWidth: 10 };
+
+            halves.forEach((cats, hi) => {
+                const body = [], meta = [];
+                cats.forEach(cat => {
+                    const items = productsData.filter(p => p.category === cat);
+                    if (!items.length) return;
+                    body.push([{ content: cat, colSpan: 11, styles: { fillColor: C.choc, textColor: C.amber, fontStyle: "bold", fontSize: 7.6, halign: "left", cellPadding: { top: 1.5, bottom: 1.5, left: 3, right: 2 } } }]);
+                    meta.push({ band: true });
+                    items.forEach((item, idx) => {
+                        const contains = new Set(item.contains.map(allergenKey).filter(Boolean));
+                        const traces = new Set(item.traces.map(allergenKey).filter(Boolean));
+                        body.push([item.name, "", "", "", "", "", "", "", "", "", ""]);
+                        meta.push({ item, contains, traces, zebra: idx % 2 === 1 });
+                    });
+                });
+
+                const head = [["Flavour / Item", ...headLabels].map((h, i) => ({
+                    content: i === 0 ? h : "",
+                    styles: { fillColor: C.creamLine, textColor: C.choc, fontStyle: "bold", fontSize: 7, halign: "left", valign: "bottom", minCellHeight: HEAD_H, cellPadding: { top: 1.6, bottom: 2, left: 2, right: 1 } }
+                }))];
+
+                doc.autoTable({
+                    head, body,
+                    startY,
+                    margin: { top: startY, left: ML + hi * (TW + GAP), right: PW - (ML + hi * (TW + GAP) + TW), bottom: 14 },
+                    tableWidth: TW,
+                    theme: "plain",
+                    styles: { font: "helvetica", fontSize: 7.2, textColor: C.text, cellPadding: { top: 1.4, bottom: 1.4, left: 2, right: 1 }, valign: "middle", halign: "center", lineWidth: 0 },
+                    columnStyles,
+                    didParseCell: d => {
+                        if (d.section !== "body") return;
+                        const m = meta[d.row.index];
+                        if (m.band) return;
+                        d.cell.styles.fillColor = m.zebra ? C.cream : C.white;
+                        if (d.column.index === 0) { d.cell.styles.fontSize = 7.6; d.cell.styles.textColor = C.choc; }
+                    },
+                    didDrawCell: d => {
+                        if (d.section === "head" && d.column.index >= 1) {
+                            doc.setFont("helvetica", "bold"); doc.setFontSize(6.8); doc.setTextColor(...C.choc);
+                            const isLast = d.column.index === headLabels.length; // Sulphites stays where it is
+                            const nudge = isLast ? 0 : 3;
+                            doc.text(headLabels[d.column.index - 1], d.cell.x + 2.6 + nudge, d.cell.y + d.cell.height - 1.6, { angle: 60 });
+                            return;
+                        }
+                        if (d.section !== "body") return;
+                        const m = meta[d.row.index];
+                        if (m.band) return;
+                        const col = d.column.index;
+                        const cx = d.cell.x + d.cell.width / 2;
+                        const cy = d.cell.y + d.cell.height / 2;
+                        if (col === 1 && m.item.veg) drawCheck(cx, cy, C.green);
+                        else if (col === 2 && m.item.vegan) drawCheck(cx, cy, C.green);
+                        else if (col === 3 && m.item.gf) drawCheck(cx, cy, C.green);
+                        else if (col >= 4 && col <= 10) {
+                            const key = PDF_ALLERGENS[col - 4];
+                            if (m.contains.has(key)) drawContains(cx, cy);
+                            else if (m.traces.has(key)) drawMayContain(cx, cy);
+                        }
+                        doc.setDrawColor(...C.creamLine); doc.setLineWidth(0.15);
+                        doc.line(d.cell.x, d.cell.y + d.cell.height, d.cell.x + d.cell.width, d.cell.y + d.cell.height);
+                    }
+                });
+            });
+
+            // ---- Footer ----
+            doc.setDrawColor(...C.creamLine); doc.setLineWidth(0.3); doc.line(ML, PH - 11, PW - MR, PH - 11);
+            doc.setFont("helvetica", "normal"); doc.setFontSize(7); doc.setTextColor(...C.muted);
+            doc.text("Please inform our team of any severe allergies before ordering.", ML, PH - 6.5);
+            doc.text("Generated on " + dateStr, PW - MR, PH - 6.5, { align: "right" });
+
+            doc.save("miogelato-allergen-guide.pdf");
         }
 
         function toggleInfoModal() {
