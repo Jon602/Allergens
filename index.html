@@ -83,6 +83,17 @@
     <div class="bg-cream-100/95 backdrop-blur-md sticky top-[61px] z-20 border-b border-cream-200/80 py-3 px-4 shadow-sm">
         <div class="max-w-3xl mx-auto space-y-2.5">
             
+            <!-- Prominent Allergy Warning Banner (Orange Theme) -->
+            <div class="bg-brandOrange-50 border-2 border-brandOrange-500/50 rounded-2xl p-3 shadow-sm flex items-start gap-2.5">
+                <span class="text-lg">⚠️</span>
+                <div class="space-y-0.5">
+                    <h4 class="text-xs font-black text-brandOrange-600 uppercase tracking-wider">Important Allergy Notice</h4>
+                    <p class="text-xs text-choc-900 font-medium leading-relaxed">
+                        Please inform our team of any severe allergies prior to ordering. Cross-contamination risks may exist in preparation areas.
+                    </p>
+                </div>
+            </div>
+
             <!-- Search Bar -->
             <div class="relative">
                 <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Search flavor or allergen (e.g., Pistachio, Wheat)..." class="w-full pl-10 pr-10 py-2.5 bg-white rounded-2xl text-sm font-medium placeholder-mutedBrown/60 border border-cream-200 focus:outline-none focus:ring-2 focus:ring-brandOrange-500 shadow-sm transition-all text-choc-900">
@@ -119,17 +130,6 @@
 
     <!-- MAIN CONTENT CONTAINER -->
     <main class="max-w-3xl w-full mx-auto px-4 py-6 flex-1 space-y-8">
-
-        <!-- Prominent Allergy Warning Banner (Orange Theme) -->
-        <div class="bg-brandOrange-50 border-2 border-brandOrange-500/50 rounded-2xl p-4 shadow-sm flex items-start gap-3">
-            <span class="text-xl">⚠️</span>
-            <div class="space-y-1">
-                <h4 class="text-xs font-black text-brandOrange-600 uppercase tracking-wider">Important Allergy Notice</h4>
-                <p class="text-xs text-choc-900 font-medium leading-relaxed">
-                    Please inform our team of any severe allergies prior to ordering. Cross-contamination risks may exist in preparation areas.
-                </p>
-            </div>
-        </div>
 
         <!-- Category Sections -->
         <div id="categoryContainer" class="space-y-6">
@@ -268,7 +268,7 @@
                 </div>
             </div>
             <p class="text-[11px] text-mutedBrown leading-relaxed">
-                Products are stored and served in an environment that handles nuts, dairy, gluten, and eggs. Please advise staff if you have severe allergies.
+                Products are stored and served in an environment that handles nuts, dairy, gluten, and egg. Please advise staff if you have severe allergies.
             </p>
             <button onclick="toggleInfoModal()" class="w-full py-2.5 bg-cream-100 text-choc-900 font-bold rounded-xl text-xs hover:bg-cream-200 transition-colors">Dismiss</button>
         </div>
@@ -277,42 +277,47 @@
     <!-- JAVASCRIPT LOGIC -->
     <script>
         const productsData = [
-            { id: 1, name: "Banoffee", category: "GELATO", veg: true, vegan: false, gf: false, contains: ["Milk"], traces: ["Gluten (Wheat)", "Eggs", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] },
-            { id: 2, name: "Belgian Milk Chocolate", category: "GELATO", veg: true, vegan: false, gf: true, contains: ["Milk", "Soya"], traces: ["Gluten (Wheat)", "Eggs", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
-            { id: 3, name: "Cherry & Amaretti Biscuit", category: "GELATO", veg: true, vegan: false, gf: true, contains: ["Milk", "Eggs"], traces: ["Gluten (Wheat)", "Nuts (Almonds)", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] },
-            { id: 4, name: "Chocolate Honeycomb", category: "GELATO", veg: true, vegan: false, gf: true, contains: ["Milk"], traces: ["Gluten (Wheat)", "Eggs", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] },
-            { id: 5, name: "Crema (Vanilla)", category: "GELATO", veg: true, vegan: false, gf: true, contains: ["Milk"], traces: ["Gluten (Wheat)", "Eggs", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] },
-            { id: 6, name: "Fig & Mascarpone", category: "GELATO", veg: true, vegan: false, gf: true, contains: ["Milk"], traces: ["Gluten (Wheat)", "Eggs", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya", "Sulphur Dioxide/Sulphites"] },
-            { id: 7, name: "Kinder Bueno", category: "GELATO", veg: true, vegan: false, gf: false, contains: ["Gluten (Wheat)", "Milk", "Nuts (Hazelnuts)", "Soya"], traces: ["Eggs", "Nuts (Pistachio)", "Peanuts"] },
-            { id: 8, name: "Lemon & Ginger Biscuit", category: "GELATO", veg: true, vegan: false, gf: false, contains: ["Milk", "Gluten (Wheat)", "Eggs"], traces: ["Nuts (Pistachio)", "Nuts (Hazelnuts)", "Peanuts", "Soya"] },
-            { id: 9, name: "Lotus Biscoff", category: "GELATO", veg: true, vegan: false, gf: false, contains: ["Milk", "Gluten (Wheat)", "Soya"], traces: ["Eggs", "Nuts (Pistachio)", "Nuts (Hazelnuts)", "Peanuts"] },
-            { id: 10, name: "Mint Chocolate Chip", category: "GELATO", veg: true, vegan: false, gf: true, contains: ["Milk", "Soya"], traces: ["Gluten (Wheat)", "Eggs", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
-            { id: 11, name: "Oreo", category: "GELATO", veg: true, vegan: false, gf: false, contains: ["Milk", "Gluten (Wheat)", "Soya"], traces: ["Eggs", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
-            { id: 12, name: "Pistachio", category: "GELATO", veg: true, vegan: false, gf: true, contains: ["Milk", "Nuts (Pistachio)"], traces: ["Gluten (Wheat)", "Eggs", "Nuts (Hazelnut)", "Peanuts", "Soya"] },
-            { id: 13, name: "Raspberry Ripple", category: "GELATO", veg: true, vegan: false, gf: true, contains: ["Milk"], traces: ["Gluten (Wheat)", "Eggs", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] },
-            { id: 14, name: "Salted Caramel", category: "GELATO", veg: true, vegan: false, gf: true, contains: ["Milk"], traces: ["Gluten (Wheat)", "Eggs", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] },
-            { id: 15, name: "Seaside Sherbet", category: "GELATO", veg: true, vegan: false, gf: true, contains: ["Milk"], traces: ["Gluten (Wheat)", "Eggs", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] },
-            { id: 16, name: "Soft Serve", category: "GELATO", veg: true, vegan: false, gf: true, contains: ["Milk"], traces: ["Gluten (Wheat)", "Eggs", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] },
-            { id: 17, name: "Tiramisu", category: "GELATO", veg: true, vegan: false, gf: true, contains: ["Milk", "Eggs"], traces: ["Gluten (Wheat)", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] },
-            { id: 18, name: "White Chocolate", category: "GELATO", veg: true, vegan: false, gf: true, contains: ["Milk", "Soya"], traces: ["Gluten (Wheat)", "Eggs", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
+            { id: 1, name: "Banoffee", category: "GELATO", veg: true, vegan: false, gf: false, contains: ["Milk"], traces: ["Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] },
+            { id: 2, name: "Belgian Milk Chocolate", category: "GELATO", veg: true, vegan: false, gf: true, contains: ["Milk", "Soya"], traces: ["Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
+            { id: 3, name: "Cherry & Amaretti Biscuit", category: "GELATO", veg: true, vegan: false, gf: true, contains: ["Milk", "Egg"], traces: ["Gluten (Wheat)", "Nuts (Almonds)", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] },
+            { id: 4, name: "Chocolate Honeycomb", category: "GELATO", veg: true, vegan: false, gf: true, contains: ["Milk"], traces: ["Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] },
+            { id: 5, name: "Crema (Vanilla)", category: "GELATO", veg: true, vegan: false, gf: true, contains: ["Milk"], traces: ["Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] },
+            { id: 6, name: "Fig & Mascarpone", category: "GELATO", veg: true, vegan: false, gf: true, contains: ["Milk"], traces: ["Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya", "Sulphur Dioxide/Sulphites"] },
+            { id: 7, name: "Kinder Bueno", category: "GELATO", veg: true, vegan: false, gf: false, contains: ["Gluten (Wheat)", "Milk", "Nuts (Hazelnuts)", "Soya"], traces: ["Egg", "Nuts (Pistachio)", "Peanuts"] },
+            { id: 8, name: "Lemon & Ginger Biscuit", category: "GELATO", veg: true, vegan: false, gf: false, contains: ["Milk", "Gluten (Wheat)", "Egg"], traces: ["Nuts (Pistachio)", "Nuts (Hazelnuts)", "Peanuts", "Soya"] },
+            { id: 9, name: "Lotus Biscoff", category: "GELATO", veg: true, vegan: false, gf: false, contains: ["Milk", "Gluten (Wheat)", "Soya"], traces: ["Egg", "Nuts (Pistachio)", "Nuts (Hazelnuts)", "Peanuts"] },
+            { id: 10, name: "Mint Chocolate Chip", category: "GELATO", veg: true, vegan: false, gf: true, contains: ["Milk", "Soya"], traces: ["Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
+            { id: 11, name: "Oreo", category: "GELATO", veg: true, vegan: false, gf: false, contains: ["Milk", "Gluten (Wheat)", "Soya"], traces: ["Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
+            { id: 12, name: "Pistachio", category: "GELATO", veg: true, vegan: false, gf: true, contains: ["Milk", "Nuts (Pistachio)"], traces: ["Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Peanuts", "Soya"] },
+            { id: 13, name: "Raspberry Ripple", category: "GELATO", veg: true, vegan: false, gf: true, contains: ["Milk"], traces: ["Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] },
+            { id: 14, name: "Salted Caramel", category: "GELATO", veg: true, vegan: false, gf: true, contains: ["Milk"], traces: ["Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] },
+            { id: 15, name: "Seaside Sherbet", category: "GELATO", veg: true, vegan: false, gf: true, contains: ["Milk"], traces: ["Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] },
+            { id: 16, name: "Soft Serve", category: "GELATO", veg: true, vegan: false, gf: true, contains: ["Milk"], traces: ["Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] },
+            { id: 17, name: "Tiramisu", category: "GELATO", veg: true, vegan: false, gf: true, contains: ["Milk", "Egg"], traces: ["Gluten (Wheat)", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] },
+            { id: 18, name: "White Chocolate", category: "GELATO", veg: true, vegan: false, gf: true, contains: ["Milk", "Soya"], traces: ["Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
 
-            { id: 19, name: "Dark Chocolate Sorbet", category: "SORBETS / VEGAN GELATO", veg: true, vegan: true, gf: true, contains: ["Soya"], traces: ["Milk", "Gluten (Wheat)", "Eggs", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
-            { id: 20, name: "Mango Sorbet", category: "SORBETS / VEGAN GELATO", veg: true, vegan: true, gf: true, contains: ["Soya"], traces: ["Milk", "Gluten (Wheat)", "Eggs", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
-            { id: 21, name: "Mixed Berry Sorbet", category: "SORBETS / VEGAN GELATO", veg: true, vegan: true, gf: true, contains: ["Soya", "Sulphur Dioxide/Sulphites"], traces: ["Milk", "Gluten (Wheat)", "Eggs", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
-            { id: 22, name: "Strawberry Sorbet", category: "SORBETS / VEGAN GELATO", veg: true, vegan: true, gf: true, contains: ["Soya"], traces: ["Milk", "Gluten (Wheat)", "Eggs", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
-            { id: 33, name: "Vegan Oreo", category: "SORBETS / VEGAN GELATO", veg: true, vegan: true, gf: false, contains: ["Gluten (Wheat)", "Soya"], traces: ["Milk", "Eggs", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
-            { id: 34, name: "Vegan Biscoff", category: "SORBETS / VEGAN GELATO", veg: true, vegan: true, gf: false, contains: ["Gluten (Wheat)", "Soya"], traces: ["Milk", "Eggs", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
+            { id: 19, name: "Dark Chocolate Sorbet", category: "SORBETS / VEGAN GELATO", veg: true, vegan: true, gf: true, contains: ["Soya"], traces: ["Milk", "Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
+            { id: 20, name: "Mango Sorbet", category: "SORBETS / VEGAN GELATO", veg: true, vegan: true, gf: true, contains: ["Soya"], traces: ["Milk", "Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
+            { id: 21, name: "Mixed Berry Sorbet", category: "SORBETS / VEGAN GELATO", veg: true, vegan: true, gf: true, contains: ["Soya", "Sulphur Dioxide/Sulphites"], traces: ["Milk", "Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
+            { id: 22, name: "Strawberry Sorbet", category: "SORBETS / VEGAN GELATO", veg: true, vegan: true, gf: true, contains: ["Soya"], traces: ["Milk", "Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
+            { id: 33, name: "Vegan Oreo", category: "SORBETS / VEGAN GELATO", veg: true, vegan: true, gf: false, contains: ["Gluten (Wheat)", "Soya"], traces: ["Milk", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
+            { id: 34, name: "Vegan Biscoff", category: "SORBETS / VEGAN GELATO", veg: true, vegan: true, gf: false, contains: ["Gluten (Wheat)", "Soya"], traces: ["Milk", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
 
-            { id: 23, name: "Apple Crumble", category: "HOT PUDDINGS", veg: true, vegan: false, gf: false, contains: ["Gluten (Wheat)", "Milk"], traces: ["Almond", "Eggs", "Hazelnut", "Pecan Nut", "Pistachio", "Soya", "Walnut"] },
-            { id: 24, name: "Cherry Bakewell", category: "HOT PUDDINGS", veg: true, vegan: false, gf: false, contains: ["Gluten (Wheat)", "Eggs", "Almond", "Milk"], traces: ["Other nuts"] },
-            { id: 25, name: "Gluten Free Sticky Toffee Pudding", category: "HOT PUDDINGS", veg: true, vegan: false, gf: true, contains: ["Eggs", "Milk"], traces: ["Almonds", "Hazelnuts", "Pecan Nut", "Pistachio", "Walnut"] },
-            { id: 26, name: "Vegan Apple Crumble", category: "HOT PUDDINGS", veg: true, vegan: true, gf: false, contains: ["Gluten (Wheat, Oats)"], traces: ["Almonds", "Eggs", "Hazelnuts", "Milk", "Pecan Nut", "Pistachio", "Soya", "Walnut"] },
+            { id: 35, name: "White Chocolate & Raspberry", category: "GUEST FLAVOURS", veg: true, vegan: false, gf: true, contains: ["Milk", "Soya"], traces: ["Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
+            { id: 36, name: "Fresh Mint", category: "GUEST FLAVOURS", veg: true, vegan: false, gf: true, contains: ["Milk"], traces: ["Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] },
+            { id: 37, name: "Orange Sorbet", category: "GUEST FLAVOURS", veg: true, vegan: true, gf: true, contains: ["Soya"], traces: ["Milk", "Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
+            { id: 38, name: "Rum & Hazelnut Brittle", category: "GUEST FLAVOURS", veg: true, vegan: false, gf: true, contains: ["Milk", "Nuts (Hazelnut)", "Peanuts"], traces: ["Gluten (Wheat)", "Egg", "Nuts (Pistachio)", "Soya"] },
+
+            { id: 23, name: "Apple Crumble", category: "HOT PUDDINGS", veg: true, vegan: false, gf: false, contains: ["Gluten (Wheat)", "Milk"], traces: ["Almond", "Egg", "Hazelnut", "Pecan Nut", "Pistachio", "Soya", "Walnut"] },
+            { id: 24, name: "Cherry Bakewell", category: "HOT PUDDINGS", veg: true, vegan: false, gf: false, contains: ["Gluten (Wheat)", "Egg", "Almond", "Milk"], traces: ["Other nuts"] },
+            { id: 25, name: "Gluten Free Sticky Toffee Pudding", category: "HOT PUDDINGS", veg: true, vegan: false, gf: true, contains: ["Egg", "Milk"], traces: ["Almonds", "Hazelnuts", "Pecan Nut", "Pistachio", "Walnut"] },
+            { id: 26, name: "Vegan Apple Crumble", category: "HOT PUDDINGS", veg: true, vegan: true, gf: false, contains: ["Gluten (Wheat, Oats)"], traces: ["Almonds", "Egg", "Hazelnuts", "Milk", "Pecan Nut", "Pistachio", "Soya", "Walnut"] },
 
             { id: 27, name: "Large waffle cone", category: "CONES & SUNDRIES", veg: true, vegan: true, gf: false, contains: ["Gluten (Wheat)", "Soya"], traces: [] },
             { id: 28, name: "Small waffle cone", category: "CONES & SUNDRIES", veg: true, vegan: true, gf: false, contains: ["Gluten (Wheat)", "Soya"], traces: [] },
             { id: 29, name: "Wafer Cone", category: "CONES & SUNDRIES", veg: true, vegan: true, gf: false, contains: ["Gluten (Wheat)", "Soya"], traces: [] },
             { id: 30, name: "Miogelato Wafer", category: "CONES & SUNDRIES", veg: true, vegan: true, gf: false, contains: ["Gluten (Wheat)", "Soya"], traces: [] },
-            { id: 31, name: "Wafer Curls", category: "CONES & SUNDRIES", veg: true, vegan: false, gf: false, contains: ["Gluten (Wheat)", "Eggs", "Milk", "Soya"], traces: [] },
+            { id: 31, name: "Wafer Curls", category: "CONES & SUNDRIES", veg: true, vegan: false, gf: false, contains: ["Gluten (Wheat)", "Egg", "Milk", "Soya"], traces: [] },
             { id: 32, name: "Chocolate Flakes", category: "CONES & SUNDRIES", veg: true, vegan: false, gf: true, contains: ["Milk", "Soya"], traces: [] }
         ];
 
@@ -320,6 +325,7 @@
         let expandedCategories = {
             "GELATO": false,
             "SORBETS / VEGAN GELATO": false,
+            "GUEST FLAVOURS": false,
             "HOT PUDDINGS": false,
             "CONES & SUNDRIES": false
         };
@@ -336,7 +342,7 @@
             container.innerHTML = "";
             let totalMatchCount = 0;
 
-            const categories = ["GELATO", "SORBETS / VEGAN GELATO", "HOT PUDDINGS", "CONES & SUNDRIES"];
+            const categories = ["GELATO", "SORBETS / VEGAN GELATO", "GUEST FLAVOURS", "HOT PUDDINGS", "CONES & SUNDRIES"];
 
             categories.forEach(cat => {
                 const catItems = productsData.filter(item => {
