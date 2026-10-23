@@ -82,6 +82,11 @@
             color: #F2B24A;
             text-shadow: 0 0 10px rgba(232,122,40,0.45);
         }
+        /* Vegan flavours: green text */
+        .flavour-card h3.vegan-name {
+            color: #5EE08F;
+            text-shadow: 0 0 10px rgba(60,200,120,0.45);
+        }
     </style>
 </head>
 <body class="min-h-full flex flex-col text-choc-900 bg-cream-100 antialiased selection:bg-brandOrange-500 selection:text-white">
@@ -433,7 +438,7 @@
             return `
                 <div onclick="openModal(${item.id})" class="flavour-card p-3 cursor-pointer flex flex-col items-center justify-center text-center group">
                     <div class="space-y-2 w-full">
-                        <h3 class="font-extrabold text-base sm:text-lg leading-tight line-clamp-2">${item.name}</h3>
+                        <h3 class="font-extrabold text-base sm:text-lg leading-tight line-clamp-2${item.vegan ? ' vegan-name' : ''}">${item.name}</h3>
 
                         <div class="flex flex-wrap items-center justify-center gap-1">
                             ${item.veg ? `<span class="${badge}">🌱 Vegetarian</span>` : ''}
