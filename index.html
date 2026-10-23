@@ -576,7 +576,7 @@
         // ------------------------------------------------------------------
         // PDF EXPORT (A4 landscape allergen matrix)
         // ------------------------------------------------------------------
-        const PDF_ALLERGENS = ["Gluten", "Egg", "Milk", "Tree Nuts", "Peanuts", "Soya", "Sulphites"];
+        const PDF_ALLERGENS = ["Gluten", "Egg", "Milk", "Nuts (Hazelnuts)", "Nuts (Pistachio)", "Peanuts", "Soya", "Sulphites"];
 
         // Map the free-text allergen wording used in productsData onto the matrix columns
         function allergenKey(text) {
@@ -587,8 +587,8 @@
             if (t.includes("milk")) return "Milk";
             if (t.includes("soya")) return "Soya";
             if (t.includes("sulphur") || t.includes("sulphite")) return "Sulphites";
-            if (t.includes("nut") || t.includes("almond") || t.includes("hazelnut") ||
-                t.includes("pecan") || t.includes("pistachio") || t.includes("walnut")) return "Tree Nuts";
+            if (t.includes("hazelnut")) return "Nuts (Hazelnuts)";
+            if (t.includes("pistachio")) return "Nuts (Pistachio)";
             return null;
         }
 
@@ -649,70 +649,64 @@
             };
 
             // ---- Header band (compact) ----
-            doc.setFillColor(...C.choc); doc.rect(0, 0, PW, 14, "F");
-            doc.setFillColor(...C.orange); doc.rect(0, 14, PW, 0.9, "F");
+            doc.setFillColor(...C.choc); doc.rect(0, 0, PW, 17, "F");
+            doc.setFillColor(...C.orange); doc.rect(0, 17, PW, 0.9, "F");
             if (logo) {
-                doc.addImage(logo, "PNG", ML, 2.5, 9, 9);
-                doc.setDrawColor(255, 255, 255); doc.setLineWidth(0.25); doc.circle(ML + 4.5, 7, 4.5, "S");
+                doc.addImage(logo, "PNG", ML, 4, 9, 9);
+                doc.setDrawColor(255, 255, 255); doc.setLineWidth(0.25); doc.circle(ML + 4.5, 8.5, 4.5, "S");
             } else {
-                doc.setFillColor(...C.orange); doc.circle(ML + 4.5, 7, 4.5, "F");
+                doc.setFillColor(...C.orange); doc.circle(ML + 4.5, 8.5, 4.5, "F");
                 doc.setFont("helvetica", "bold"); doc.setFontSize(9); doc.setTextColor(255, 255, 255);
-                doc.text("m", ML + 4.5, 8.8, { align: "center" });
+                doc.text("m", ML + 4.5, 10.3, { align: "center" });
             }
             doc.setFont("helvetica", "bold"); doc.setFontSize(13); doc.setTextColor(255, 255, 255);
-            doc.text("miogelato", ML + 12, 7);
+            doc.text("miogelato", ML + 12, 8.5);
             doc.setFont("helvetica", "normal"); doc.setFontSize(7); doc.setTextColor(...C.amber);
-            doc.text("Allergen & Dietary Reference Guide", ML + 12, 11.2);
+            doc.text("Allergen & Dietary Reference Guide", ML + 12, 12.7);
+
+            // ---- Contact details (Morecambe) ----
+            doc.setFont("helvetica", "normal"); doc.setFontSize(7); doc.setTextColor(...C.amber);
+            doc.text("272 Marine Road Central, Morecambe, LA4 5BX   |   01524 419606   |   info@miogelato.co.uk   |   www.miogelato.co.uk", PW - MR, 7, { align: "right" });
 
             // ---- Key (right side of header) ----
             doc.setFont("helvetica", "normal"); doc.setFontSize(7);
             const keyItems = [
                 { txt: "Contains", draw: (x, y) => { doc.setFillColor(...C.contains); doc.circle(x, y, 1.55, "F"); } },
                 { txt: "May contain (traces)", draw: (x, y) => { doc.setDrawColor(...C.orange); doc.setLineWidth(0.55); doc.setFillColor(...C.choc); doc.circle(x, y, 1.35, "FD"); } },
-                { txt: "Suitable (Veg / Vegan / GF)", draw: (x, y) => drawCheck(x, y, [110, 220, 160]) }
+                { txt: "Suitable (Vegetarian / Vegan / Gluten Free)", draw: (x, y) => drawCheck(x, y, [110, 220, 160]) }
             ];
             const ICON_W = 3.2, ICON_GAP = 2.2, ITEM_GAP = 7;
             const keyWidths = keyItems.map(k => ICON_W + ICON_GAP + doc.getTextWidth(k.txt));
             let kx = PW - MR - (keyWidths.reduce((a, b) => a + b, 0) + ITEM_GAP * (keyItems.length - 1));
             keyItems.forEach((k, i) => {
-                k.draw(kx + ICON_W / 2, 7.4);
+                k.draw(kx + ICON_W / 2, 12.6);
                 doc.setFont("helvetica", "normal"); doc.setFontSize(7); doc.setTextColor(255, 255, 255);
-                doc.text(k.txt, kx + ICON_W + ICON_GAP, 8.3);
+                doc.text(k.txt, kx + ICON_W + ICON_GAP, 13.5);
                 kx += keyWidths[i] + ITEM_GAP;
             });
-
-            // ---- Allergy notice ----
-            const ny = 18.5;
-            doc.setFillColor(...C.orangeLight); doc.setDrawColor(...C.orange); doc.setLineWidth(0.4);
-            doc.roundedRect(ML, ny, PW - ML - MR, 8, 2, 2, "FD");
-            doc.setFont("helvetica", "bold"); doc.setFontSize(7); doc.setTextColor(...C.orangeDark);
-            doc.text("IMPORTANT ALLERGY NOTICE:", ML + 4, ny + 5);
-            const lw = doc.getTextWidth("IMPORTANT ALLERGY NOTICE:  ");
-            doc.setFont("helvetica", "normal"); doc.setTextColor(...C.text);
-            doc.text("Please inform our team of any severe allergies prior to ordering. Cross-contamination risks may exist in preparation areas.", ML + 4 + lw, ny + 5);
 
             // ---- Two side-by-side tables ----
             const categories = ["GELATO", "SORBETS / VEGAN GELATO", "GUEST FLAVOURS", "HOT PUDDINGS", "CONES & SUNDRIES"];
             const halves = [[categories[0]], categories.slice(1)];
             const TW = 135, GAP = 7;
-            const startY = 30;
-            const HEAD_H = 15;
-            const headLabels = ["Veg", "Vegan", "GF", ...PDF_ALLERGENS];
+            const startY = 22;
+            const HEAD_H = 20;
+            const headLabels = ["Vegetarian", "Vegan", "Gluten Free", ...PDF_ALLERGENS];
 
-            const columnStyles = { 0: { cellWidth: 38, halign: "left", fontStyle: "bold" }, 1: { cellWidth: 9 }, 2: { cellWidth: 9 }, 3: { cellWidth: 9 } };
-            for (let i = 4; i <= 10; i++) columnStyles[i] = { cellWidth: 10 };
+            const columnStyles = { 0: { cellWidth: 36, halign: "left", fontStyle: "bold" }, 1: { cellWidth: 9 }, 2: { cellWidth: 9 }, 3: { cellWidth: 9 } };
+            for (let i = 4; i <= 11; i++) columnStyles[i] = { cellWidth: 9 };
 
             halves.forEach((cats, hi) => {
                 const body = [], meta = [];
                 cats.forEach(cat => {
                     const items = productsData.filter(p => p.category === cat);
                     if (!items.length) return;
-                    body.push([{ content: cat, colSpan: 11, styles: { fillColor: C.choc, textColor: C.amber, fontStyle: "bold", fontSize: 7.6, halign: "left", cellPadding: { top: 1.5, bottom: 1.5, left: 3, right: 2 } } }]);
+                    body.push([{ content: cat, colSpan: 12, styles: { fillColor: C.choc, textColor: C.amber, fontStyle: "bold", fontSize: 7.6, halign: "left", cellPadding: { top: 1.5, bottom: 1.5, left: 3, right: 2 } } }]);
                     meta.push({ band: true });
                     items.forEach((item, idx) => {
                         const contains = new Set(item.contains.map(allergenKey).filter(Boolean));
                         const traces = new Set(item.traces.map(allergenKey).filter(Boolean));
-                        body.push([item.name, "", "", "", "", "", "", "", "", "", ""]);
+                        body.push([item.name, "", "", "", "", "", "", "", "", "", "", ""]);
                         meta.push({ item, contains, traces, zebra: idx % 2 === 1 });
                     });
                 });
@@ -755,7 +749,7 @@
                         if (col === 1 && m.item.veg) drawCheck(cx, cy, C.green);
                         else if (col === 2 && m.item.vegan) drawCheck(cx, cy, C.green);
                         else if (col === 3 && m.item.gf) drawCheck(cx, cy, C.green);
-                        else if (col >= 4 && col <= 10) {
+                        else if (col >= 4 && col <= 11) {
                             const key = PDF_ALLERGENS[col - 4];
                             if (m.contains.has(key)) drawContains(cx, cy);
                             else if (m.traces.has(key)) drawMayContain(cx, cy);
@@ -772,8 +766,7 @@
             // ---- Footer ----
             doc.setDrawColor(...C.creamLine); doc.setLineWidth(0.3); doc.line(ML, PH - 11, PW - MR, PH - 11);
             doc.setFont("helvetica", "normal"); doc.setFontSize(7); doc.setTextColor(...C.muted);
-            doc.text("Please inform our team of any severe allergies before ordering.", ML, PH - 6.5);
-            doc.text("Generated on " + dateStr, PW - MR, PH - 6.5, { align: "right" });
+                        doc.text("Generated on " + dateStr, PW - MR, PH - 6.5, { align: "right" });
 
             doc.save("miogelato-allergen-guide.pdf");
         }
