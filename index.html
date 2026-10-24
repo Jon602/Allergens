@@ -115,7 +115,7 @@
 
             <!-- Store Info Button -->
             <div class="flex items-center space-x-2 shrink-0">
-                <button id="downloadPdfBtn" onclick="downloadAllergenPDF()" title="Download the full allergen guide as an A4 landscape PDF" aria-label="Download PDF" class="p-2 sm:px-3 sm:py-1.5 rounded-full bg-white/10 hover:bg-white/20 transition-all text-xs font-semibold flex items-center gap-1.5 border border-white/10 whitespace-nowrap disabled:opacity-60 disabled:cursor-wait">
+                <button id="downloadPdfBtn" onclick="openPdfModal()" title="Choose items and download the allergen guide as an A4 landscape PDF" aria-label="Download PDF" class="p-2 sm:px-3 sm:py-1.5 rounded-full bg-white/10 hover:bg-white/20 transition-all text-xs font-semibold flex items-center gap-1.5 border border-white/10 whitespace-nowrap disabled:opacity-60 disabled:cursor-wait">
                     <svg id="downloadPdfIcon" class="w-4 h-4 sm:w-3.5 sm:h-3.5 text-brandOrange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M12 4v11m0 0l-4-4m4 4l4-4"></path></svg>
                     <span id="downloadPdfLabel" class="hidden sm:inline">Download PDF</span>
                 </button>
@@ -288,6 +288,10 @@
                         <span class="text-mutedBrown">📞</span>
                         <a href="tel:01524419606" class="text-brandOrange-600 font-bold hover:underline">01524 419606</a>
                     </div>
+                    <div class="flex items-center space-x-2.5 pl-6">
+                        <span class="text-mutedBrown">🌐</span>
+                        <a href="https://morecambe.miogelato.co.uk" target="_blank" rel="noopener" class="text-brandOrange-600 font-bold hover:underline">morecambe.miogelato.co.uk</a>
+                    </div>
                 </div>
                 <div class="space-y-1 pt-2 border-t border-cream-100">
                     <div class="flex items-start space-x-2.5">
@@ -297,6 +301,10 @@
                     <div class="flex items-center space-x-2.5 pl-6">
                         <span class="text-mutedBrown">📞</span>
                         <a href="tel:01524956682" class="text-brandOrange-600 font-bold hover:underline">01524 956682</a>
+                    </div>
+                    <div class="flex items-center space-x-2.5 pl-6">
+                        <span class="text-mutedBrown">🌐</span>
+                        <a href="https://lancaster.miogelato.co.uk" target="_blank" rel="noopener" class="text-brandOrange-600 font-bold hover:underline">lancaster.miogelato.co.uk</a>
                     </div>
                 </div>
                 <div class="space-y-1 pt-2 border-t border-cream-100">
@@ -314,6 +322,43 @@
                 Products are stored and served in an environment that handles nuts, dairy, gluten, and egg. Please advise staff if you have severe allergies.
             </p>
             <button onclick="toggleInfoModal()" class="w-full py-2.5 bg-cream-100 text-choc-900 font-bold rounded-xl text-xs hover:bg-cream-200 transition-colors">Dismiss</button>
+        </div>
+    </div>
+
+    <!-- PDF ITEM PICKER MODAL -->
+    <div id="pdfModal" role="dialog" aria-modal="true" aria-labelledby="pdfModalTitle" class="fixed inset-0 bg-choc-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden transition-opacity duration-200 opacity-0" onclick="if(event.target===this) closePdfModal()">
+        <div id="pdfModalContent" class="bg-white rounded-[24px] max-w-lg w-full overflow-hidden shadow-2xl border border-cream-200 transform scale-95 transition-transform duration-200 flex flex-col max-h-[88vh]">
+            <!-- Header -->
+            <div class="bg-choc-900 px-5 py-4 flex items-start justify-between gap-3 shrink-0">
+                <div>
+                    <h2 id="pdfModalTitle" class="text-lg font-black text-white leading-tight">Choose items for your PDF</h2>
+                    <p class="text-[11px] text-amber-200/70 font-medium mt-1">Tick the flavours and products to include. They fill the page from the top left.</p>
+                </div>
+                <button onclick="closePdfModal()" aria-label="Close" class="p-2 text-amber-200/60 hover:text-white rounded-full bg-white/5 hover:bg-white/10 transition-colors shrink-0">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <!-- Quick actions -->
+            <div class="px-5 py-3 flex items-center justify-between gap-3 border-b border-cream-200 bg-cream-50 shrink-0">
+                <span id="pdfSelectedCount" class="text-xs font-bold text-choc-900"></span>
+                <div class="flex items-center gap-2">
+                    <button onclick="pdfSelectAll(true)" class="px-3 py-1.5 rounded-full bg-white border border-cream-200 hover:border-brandOrange-500 text-[11px] font-bold text-choc-900 transition-colors">Select all</button>
+                    <button onclick="pdfSelectAll(false)" class="px-3 py-1.5 rounded-full bg-white border border-cream-200 hover:border-brandOrange-500 text-[11px] font-bold text-choc-900 transition-colors">Clear</button>
+                </div>
+            </div>
+
+            <!-- Item list (filled by renderPdfPicker) -->
+            <div id="pdfPickerList" class="p-4 space-y-4 overflow-y-auto flex-1 min-h-0 no-scrollbar"></div>
+
+            <!-- Footer -->
+            <div class="px-5 py-3 border-t border-cream-200 bg-cream-50 flex items-center gap-3 shrink-0">
+                <button onclick="closePdfModal()" class="flex-1 py-3 bg-cream-100 text-choc-900 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-cream-200 transition-colors">Cancel</button>
+                <button id="pdfGenerateBtn" onclick="generateSelectedPDF()" class="flex-[2] py-3 bg-choc-900 text-white rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-choc-800 transition-colors shadow-sm flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed">
+                    <svg class="w-4 h-4 text-brandOrange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M12 4v11m0 0l-4-4m4 4l4-4"></path></svg>
+                    Generate PDF
+                </button>
+            </div>
         </div>
     </div>
 
@@ -583,6 +628,134 @@
         }
 
         // ------------------------------------------------------------------
+        // PDF ITEM PICKER (choose which flavours / products go in the PDF)
+        // ------------------------------------------------------------------
+        const PDF_CATEGORIES = ["GELATO", "SORBETS / VEGAN GELATO", "GUEST FLAVOURS", "HOT PUDDINGS", "CONES & SUNDRIES"];
+        const pdfSelection = new Set();   // ids of products ticked in the picker
+        let pdfSelectionReady = false;    // everything is ticked the first time the picker opens
+
+        function openPdfModal() {
+            if (!pdfSelectionReady) {
+                productsData.forEach(p => pdfSelection.add(p.id));
+                pdfSelectionReady = true;
+            }
+            renderPdfPicker();
+            const modal = document.getElementById("pdfModal");
+            const content = document.getElementById("pdfModalContent");
+            modal.classList.remove("hidden");
+            setTimeout(() => {
+                modal.classList.remove("opacity-0");
+                content.classList.remove("scale-95");
+                content.classList.add("scale-100");
+            }, 10);
+            document.body.style.overflow = "hidden";
+        }
+
+        function closePdfModal() {
+            const modal = document.getElementById("pdfModal");
+            const content = document.getElementById("pdfModalContent");
+            modal.classList.add("opacity-0");
+            content.classList.remove("scale-100");
+            content.classList.add("scale-95");
+            setTimeout(() => {
+                modal.classList.add("hidden");
+                document.body.style.overflow = "";
+            }, 200);
+        }
+
+        function renderPdfPicker() {
+            const list = document.getElementById("pdfPickerList");
+            list.innerHTML = "";
+            PDF_CATEGORIES.forEach(cat => {
+                const items = productsData.filter(p => p.category === cat);
+                if (!items.length) return;
+
+                const section = document.createElement("section");
+                section.className = "space-y-2";
+
+                const head = document.createElement("label");
+                head.className = "flex items-center gap-2.5 px-3 py-2 rounded-xl bg-choc-900 text-white cursor-pointer select-none";
+                const catBox = document.createElement("input");
+                catBox.type = "checkbox";
+                catBox.dataset.cat = cat;
+                catBox.style.accentColor = "#E87A28";
+                catBox.className = "w-4 h-4 shrink-0 cursor-pointer";
+                const catName = document.createElement("span");
+                catName.className = "flex-1 text-[11px] font-extrabold uppercase tracking-wider";
+                catName.textContent = cat;
+                const catCount = document.createElement("span");
+                catCount.dataset.catCount = cat;
+                catCount.className = "text-[11px] font-semibold text-amber-200/80";
+                head.append(catBox, catName, catCount);
+                section.appendChild(head);
+
+                const grid = document.createElement("div");
+                grid.className = "grid grid-cols-1 sm:grid-cols-2 gap-1.5";
+                items.forEach(item => {
+                    const row = document.createElement("label");
+                    row.className = "flex items-center gap-2.5 px-3 py-2 rounded-xl border border-cream-200 bg-white hover:border-brandOrange-500 cursor-pointer select-none transition-colors";
+                    const box = document.createElement("input");
+                    box.type = "checkbox";
+                    box.dataset.id = String(item.id);
+                    box.checked = pdfSelection.has(item.id);
+                    box.style.accentColor = "#E87A28";
+                    box.className = "w-4 h-4 shrink-0 cursor-pointer";
+                    const name = document.createElement("span");
+                    name.className = "text-xs font-semibold text-choc-900 leading-snug";
+                    name.textContent = item.name;
+                    row.append(box, name);
+                    grid.appendChild(row);
+                });
+                section.appendChild(grid);
+                list.appendChild(section);
+            });
+            updatePdfPickerState();
+        }
+
+        function updatePdfPickerState() {
+            const list = document.getElementById("pdfPickerList");
+            list.querySelectorAll("input[data-id]").forEach(b => { b.checked = pdfSelection.has(Number(b.dataset.id)); });
+            PDF_CATEGORIES.forEach(cat => {
+                const items = productsData.filter(p => p.category === cat);
+                const catBox = list.querySelector('input[data-cat="' + cat.replace(/"/g, '\\"') + '"]');
+                if (!catBox) return;
+                const n = items.filter(p => pdfSelection.has(p.id)).length;
+                catBox.checked = n === items.length;
+                catBox.indeterminate = n > 0 && n < items.length;
+                const cnt = list.querySelector('[data-cat-count="' + cat.replace(/"/g, '\\"') + '"]');
+                if (cnt) cnt.textContent = n + " / " + items.length;
+            });
+            document.getElementById("pdfSelectedCount").textContent =
+                pdfSelection.size + " of " + productsData.length + " selected";
+            const go = document.getElementById("pdfGenerateBtn");
+            go.disabled = pdfSelection.size === 0;
+        }
+
+        function pdfSelectAll(on) {
+            pdfSelection.clear();
+            if (on) productsData.forEach(p => pdfSelection.add(p.id));
+            updatePdfPickerState();
+        }
+
+        // Tick / untick single items and whole categories
+        document.addEventListener("change", e => {
+            const t = e.target;
+            if (!t || t.type !== "checkbox" || !t.closest("#pdfPickerList")) return;
+            if (t.dataset.id) {
+                const id = Number(t.dataset.id);
+                t.checked ? pdfSelection.add(id) : pdfSelection.delete(id);
+            } else if (t.dataset.cat) {
+                productsData.filter(p => p.category === t.dataset.cat)
+                    .forEach(p => t.checked ? pdfSelection.add(p.id) : pdfSelection.delete(p.id));
+            }
+            updatePdfPickerState();
+        });
+
+        document.addEventListener("keydown", e => {
+            if (e.key === "Escape" && !document.getElementById("pdfModal").classList.contains("hidden")) closePdfModal();
+        });
+
+        // ------------------------------------------------------------------
         // PDF EXPORT (A4 landscape allergen matrix)
         // ------------------------------------------------------------------
         const PDF_ALLERGENS = ["Gluten", "Egg", "Milk", "Nuts (Hazelnuts)", "Nuts (Pistachio)", "Peanuts", "Soya", "Sulphites"];
@@ -611,20 +784,26 @@
             return Promise.resolve(PDF_LOGO);
         }
 
-        async function downloadAllergenPDF() {
+        // Opens from the header button: pick items first, then generate
+        function downloadAllergenPDF() { openPdfModal(); }
+
+        async function generateSelectedPDF() {
+            const items = productsData.filter(p => pdfSelection.has(p.id));
+            if (!items.length) return;
             const btn = document.getElementById("downloadPdfBtn");
             const label = document.getElementById("downloadPdfLabel");
             if (!window.jspdf || !window.jspdf.jsPDF) {
                 alert("The PDF tool is still loading or could not be reached. Please check your connection and try again.");
                 return;
             }
+            closePdfModal();
             btn.disabled = true;
             label.textContent = "Preparing…";
             document.getElementById("downloadPdfIcon").classList.add("animate-pulse");
 
             try {
                 const logo = await loadLogoForPdf();
-                buildAllergenPDF(logo);
+                buildAllergenPDF(logo, items);
             } catch (err) {
                 console.error(err);
                 alert("Sorry, the PDF could not be created. Please try again.");
@@ -635,7 +814,7 @@
             }
         }
 
-        function buildAllergenPDF(logo) {
+        function buildAllergenPDF(logo, selectedItems) {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
             const PW = 297, PH = 210, ML = 10, MR = 10;
@@ -660,66 +839,101 @@
                 doc.setFillColor(...C.white); doc.circle(cx, cy, 1.35, "FD");
             };
 
-            // ---- Header band (compact) ----
-            doc.setFillColor(...C.choc); doc.rect(0, 0, PW, 17, "F");
-            doc.setFillColor(...C.orange); doc.rect(0, 17, PW, 0.9, "F");
-            if (logo) {
-                doc.addImage(logo, "PNG", ML, 4, 9, 9);
-                doc.setDrawColor(255, 255, 255); doc.setLineWidth(0.25); doc.circle(ML + 4.5, 8.5, 4.5, "S");
-            } else {
-                doc.setFillColor(...C.orange); doc.circle(ML + 4.5, 8.5, 4.5, "F");
-                doc.setFont("helvetica", "bold"); doc.setFontSize(9); doc.setTextColor(255, 255, 255);
-                doc.text("m", ML + 4.5, 10.3, { align: "center" });
-            }
-            doc.addImage(PDF_WORDMARK, "PNG", ML + 12, 3.2, 30.2, 6.8);
-            doc.setFont("helvetica", "normal"); doc.setFontSize(7); doc.setTextColor(...C.amber);
-            doc.text("Allergen & Dietary Reference Guide", ML + 12, 12.7);
+            // ---- Header band + key (drawn on every page) ----
+            const drawPageHeader = () => {
+                doc.setFillColor(...C.choc); doc.rect(0, 0, PW, 17, "F");
+                doc.setFillColor(...C.orange); doc.rect(0, 17, PW, 0.9, "F");
+                if (logo) {
+                    doc.addImage(logo, "PNG", ML, 4, 9, 9);
+                    doc.setDrawColor(255, 255, 255); doc.setLineWidth(0.25); doc.circle(ML + 4.5, 8.5, 4.5, "S");
+                } else {
+                    doc.setFillColor(...C.orange); doc.circle(ML + 4.5, 8.5, 4.5, "F");
+                    doc.setFont("helvetica", "bold"); doc.setFontSize(9); doc.setTextColor(255, 255, 255);
+                    doc.text("m", ML + 4.5, 10.3, { align: "center" });
+                }
+                doc.addImage(PDF_WORDMARK, "PNG", ML + 12, 3.2, 30.2, 6.8);
+                doc.setFont("helvetica", "normal"); doc.setFontSize(7); doc.setTextColor(...C.amber);
+                doc.text("Allergen & Dietary Reference Guide", ML + 12, 12.7);
 
-            // ---- Contact details (Morecambe) ----
-            doc.setFont("helvetica", "normal"); doc.setFontSize(7); doc.setTextColor(...C.amber);
-            doc.text("272 Marine Road Central, Morecambe, LA4 5BX   |   01524 419606   |   info@miogelato.co.uk   |   www.miogelato.co.uk", PW - MR, 7, { align: "right" });
+                doc.setFont("helvetica", "normal"); doc.setFontSize(7); doc.setTextColor(...C.amber);
+                doc.text("272 Marine Road Central, Morecambe, LA4 5BX   |   01524 419606   |   info@miogelato.co.uk   |   www.miogelato.co.uk", PW - MR, 7, { align: "right" });
 
-            // ---- Key (right side of header) ----
-            doc.setFont("helvetica", "normal"); doc.setFontSize(7);
-            const keyItems = [
-                { txt: "Contains", draw: (x, y) => { doc.setFillColor(...C.contains); doc.circle(x, y, 1.55, "F"); } },
-                { txt: "May contain (traces)", draw: (x, y) => { doc.setDrawColor(...C.orange); doc.setLineWidth(0.55); doc.setFillColor(...C.choc); doc.circle(x, y, 1.35, "FD"); } },
-                { txt: "Suitable (Vegetarian / Vegan / Gluten Free)", draw: (x, y) => drawCheck(x, y, [110, 220, 160]) }
-            ];
-            const ICON_W = 3.2, ICON_GAP = 2.2, ITEM_GAP = 7;
-            const keyWidths = keyItems.map(k => ICON_W + ICON_GAP + doc.getTextWidth(k.txt));
-            let kx = PW - MR - (keyWidths.reduce((a, b) => a + b, 0) + ITEM_GAP * (keyItems.length - 1));
-            keyItems.forEach((k, i) => {
-                k.draw(kx + ICON_W / 2, 12.6);
-                doc.setFont("helvetica", "normal"); doc.setFontSize(7); doc.setTextColor(255, 255, 255);
-                doc.text(k.txt, kx + ICON_W + ICON_GAP, 13.5);
-                kx += keyWidths[i] + ITEM_GAP;
-            });
+                doc.setFont("helvetica", "normal"); doc.setFontSize(7);
+                const keyItems = [
+                    { txt: "Contains", draw: (x, y) => { doc.setFillColor(...C.contains); doc.circle(x, y, 1.55, "F"); } },
+                    { txt: "May contain (traces)", draw: (x, y) => { doc.setDrawColor(...C.orange); doc.setLineWidth(0.55); doc.setFillColor(...C.choc); doc.circle(x, y, 1.35, "FD"); } },
+                    { txt: "Suitable (Vegetarian / Vegan / Gluten Free)", draw: (x, y) => drawCheck(x, y, [110, 220, 160]) }
+                ];
+                const ICON_W = 3.2, ICON_GAP = 2.2, ITEM_GAP = 7;
+                const keyWidths = keyItems.map(k => ICON_W + ICON_GAP + doc.getTextWidth(k.txt));
+                let kx = PW - MR - (keyWidths.reduce((a, b) => a + b, 0) + ITEM_GAP * (keyItems.length - 1));
+                keyItems.forEach((k, i) => {
+                    k.draw(kx + ICON_W / 2, 12.6);
+                    doc.setFont("helvetica", "normal"); doc.setFontSize(7); doc.setTextColor(255, 255, 255);
+                    doc.text(k.txt, kx + ICON_W + ICON_GAP, 13.5);
+                    kx += keyWidths[i] + ITEM_GAP;
+                });
+            };
 
-            // ---- Two side-by-side tables ----
-            const categories = ["GELATO", "SORBETS / VEGAN GELATO", "GUEST FLAVOURS", "HOT PUDDINGS", "CONES & SUNDRIES"];
-            const halves = [[categories[0]], categories.slice(1)];
+            // ---- Table geometry ----
             const TW = 135, GAP = 7;
             const startY = 22;
             const HEAD_H = 20;
+            const BOTTOM = PH - 14;                       // lowest point a table may reach
             const headLabels = ["Vegetarian", "Vegan", "Gluten Free", ...PDF_ALLERGENS];
 
             const columnStyles = { 0: { cellWidth: 36, halign: "left", fontStyle: "bold" }, 1: { cellWidth: 9 }, 2: { cellWidth: 9 }, 3: { cellWidth: 9 } };
             for (let i = 4; i <= 11; i++) columnStyles[i] = { cellWidth: 9 };
 
-            halves.forEach((cats, hi) => {
+            // ---- Measure rows so the layout is exact (names can wrap onto 2 lines) ----
+            const NAME_FS = 7.6, NAME_W = 36 - 3;         // column width minus left/right padding
+            const lhf = typeof doc.getLineHeightFactor === "function" ? doc.getLineHeightFactor() : 1.15;
+            const lineH = NAME_FS * lhf / doc.internal.scaleFactor;
+            const BAND_H = lineH + 3 + 0.15;
+            doc.setFont("helvetica", "bold"); doc.setFontSize(NAME_FS);
+            const itemHeight = item => {
+                const lines = doc.splitTextToSize(item.name, NAME_W).length;
+                return Math.max(5.9, lines * lineH + 2.8 + 0.15);
+            };
+            const capacity = BOTTOM - (startY + HEAD_H) - 0.5;
+
+            // ---- Flow the selected items into columns: left column first, then right, then next page ----
+            const columns = [];
+            let cur = { rows: [], h: 0 };
+            const closeColumn = () => { if (cur.rows.length) columns.push(cur); cur = { rows: [], h: 0 }; };
+            const addBand = (label) => { cur.rows.push({ band: true, label }); cur.h += BAND_H; };
+
+            PDF_CATEGORIES.forEach(cat => {
+                const items = selectedItems.filter(p => p.category === cat);
+                items.forEach((item, idx) => {
+                    const ih = itemHeight(item);
+                    if (idx === 0) {
+                        // a category heading must never be stranded at the bottom of a column
+                        if (cur.h + BAND_H + ih > capacity) closeColumn();
+                        addBand(cat);
+                    } else if (cur.h + ih > capacity) {
+                        closeColumn();
+                        addBand(cat + " (continued)");
+                    }
+                    cur.rows.push({ item, h: ih, zebra: idx % 2 === 1 });
+                    cur.h += ih;
+                });
+            });
+            closeColumn();
+
+            // ---- Draw one column (a table) ----
+            const drawColumn = (col, slot) => {
                 const body = [], meta = [];
-                cats.forEach(cat => {
-                    const items = productsData.filter(p => p.category === cat);
-                    if (!items.length) return;
-                    body.push([{ content: cat, colSpan: 12, styles: { fillColor: C.choc, textColor: C.amber, fontStyle: "bold", fontSize: 7.6, halign: "left", cellPadding: { top: 1.5, bottom: 1.5, left: 3, right: 2 } } }]);
-                    meta.push({ band: true });
-                    items.forEach((item, idx) => {
-                        const contains = new Set(item.contains.map(allergenKey).filter(Boolean));
-                        const traces = new Set(item.traces.map(allergenKey).filter(Boolean));
-                        body.push([item.name, "", "", "", "", "", "", "", "", "", "", ""]);
-                        meta.push({ item, contains, traces, zebra: idx % 2 === 1 });
-                    });
+                col.rows.forEach(r => {
+                    if (r.band) {
+                        body.push([{ content: r.label, colSpan: 12, styles: { fillColor: C.choc, textColor: C.amber, fontStyle: "bold", fontSize: NAME_FS, halign: "left", minCellHeight: BAND_H, cellPadding: { top: 1.5, bottom: 1.5, left: 3, right: 2 } } }]);
+                        meta.push({ band: true });
+                    } else {
+                        body.push([{ content: r.item.name, styles: { fontSize: NAME_FS, textColor: C.choc, minCellHeight: r.h } }, "", "", "", "", "", "", "", "", "", "", ""]);
+                        const contains = new Set(r.item.contains.map(allergenKey).filter(Boolean));
+                        const traces = new Set(r.item.traces.map(allergenKey).filter(Boolean));
+                        meta.push({ item: r.item, contains, traces, zebra: r.zebra });
+                    }
                 });
 
                 const head = [["Flavour / Item", ...headLabels].map((h, i) => ({
@@ -727,11 +941,12 @@
                     styles: { fillColor: C.creamLine, textColor: C.choc, fontStyle: "bold", fontSize: 7, halign: "left", valign: "bottom", minCellHeight: HEAD_H, cellPadding: { top: 1.6, bottom: 2, left: 2, right: 1 } }
                 }))];
 
+                const left = ML + slot * (TW + GAP);
                 const headJobs = [];
                 doc.autoTable({
                     head, body,
                     startY,
-                    margin: { top: startY, left: ML + hi * (TW + GAP), right: PW - (ML + hi * (TW + GAP) + TW), bottom: 14 },
+                    margin: { top: startY, left, right: PW - (left + TW), bottom: 14 },
                     tableWidth: TW,
                     theme: "plain",
                     styles: { font: "helvetica", fontSize: 7.2, textColor: C.text, cellPadding: { top: 1.4, bottom: 1.4, left: 2, right: 1 }, valign: "middle", halign: "center", lineWidth: 0 },
@@ -741,7 +956,6 @@
                         const m = meta[d.row.index];
                         if (m.band) return;
                         d.cell.styles.fillColor = m.zebra ? C.cream : C.white;
-                        if (d.column.index === 0) { d.cell.styles.fontSize = 7.6; d.cell.styles.textColor = C.choc; }
                     },
                     didDrawCell: d => {
                         if (d.section === "head" && d.column.index >= 1) {
@@ -754,14 +968,14 @@
                         if (d.section !== "body") return;
                         const m = meta[d.row.index];
                         if (m.band) return;
-                        const col = d.column.index;
+                        const c = d.column.index;
                         const cx = d.cell.x + d.cell.width / 2;
                         const cy = d.cell.y + d.cell.height / 2;
-                        if (col === 1 && m.item.veg) drawCheck(cx, cy, C.green);
-                        else if (col === 2 && m.item.vegan) drawCheck(cx, cy, C.green);
-                        else if (col === 3 && m.item.gf) drawCheck(cx, cy, C.green);
-                        else if (col >= 4 && col <= 11) {
-                            const key = PDF_ALLERGENS[col - 4];
+                        if (c === 1 && m.item.veg) drawCheck(cx, cy, C.green);
+                        else if (c === 2 && m.item.vegan) drawCheck(cx, cy, C.green);
+                        else if (c === 3 && m.item.gf) drawCheck(cx, cy, C.green);
+                        else if (c >= 4 && c <= 11) {
+                            const key = PDF_ALLERGENS[c - 4];
                             if (m.contains.has(key)) drawContains(cx, cy);
                             else if (m.traces.has(key)) drawMayContain(cx, cy);
                         }
@@ -772,12 +986,25 @@
 
                 doc.setFont("helvetica", "bold"); doc.setFontSize(6.8); doc.setTextColor(...C.choc);
                 headJobs.forEach(j => doc.text(j.txt, j.x, j.y, { angle: 60 }));
-            });
+            };
 
-            // ---- Footer ----
-            doc.setDrawColor(...C.creamLine); doc.setLineWidth(0.3); doc.line(ML, PH - 11, PW - MR, PH - 11);
-            doc.setFont("helvetica", "normal"); doc.setFontSize(7); doc.setTextColor(...C.muted);
-                        doc.text("Generated on " + dateStr, PW - MR, PH - 6.5, { align: "right" });
+            // ---- Pages: two columns per page, filled from the top left ----
+            for (let i = 0; i < columns.length; i += 2) {
+                if (i > 0) doc.addPage();
+                drawPageHeader();
+                drawColumn(columns[i], 0);
+                if (columns[i + 1]) drawColumn(columns[i + 1], 1);
+            }
+
+            // ---- Footer on every page ----
+            const totalPages = doc.getNumberOfPages();
+            for (let p = 1; p <= totalPages; p++) {
+                doc.setPage(p);
+                doc.setDrawColor(...C.creamLine); doc.setLineWidth(0.3); doc.line(ML, PH - 11, PW - MR, PH - 11);
+                doc.setFont("helvetica", "normal"); doc.setFontSize(7); doc.setTextColor(...C.muted);
+                doc.text("Generated on " + dateStr, PW - MR, PH - 6.5, { align: "right" });
+                if (totalPages > 1) doc.text("Page " + p + " of " + totalPages, ML, PH - 6.5);
+            }
 
             doc.save("miogelato-allergen-guide.pdf");
         }
