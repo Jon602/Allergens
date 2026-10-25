@@ -519,6 +519,8 @@
                     <div class="space-y-2 w-full">
                         <h3 class="font-extrabold text-base sm:text-lg leading-tight line-clamp-2${item.vegan ? ' vegan-name' : ''}">${item.name}</h3>
 
+                        <div class="w-3/4 h-px bg-black/25 mx-auto" aria-hidden="true"></div>
+
                         <div class="flex flex-wrap items-center justify-center gap-1">
                             ${item.veg ? `<span class="${badge}">Vegetarian <span class="tick" aria-hidden="true">✓</span></span>` : ''}
                             ${item.vegan ? `<span class="${badge}">Vegan <span class="tick" aria-hidden="true">✓</span></span>` : ''}
