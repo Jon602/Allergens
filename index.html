@@ -109,6 +109,8 @@
             border-color: #14532D;
         }
         .flavour-badge.badge-vegan .tick { color: #86EFAC; }
+        /* In the dark popup header, give the solid vegan badge a light edge so it stays visible */
+        #modalDietaryBadges .flavour-badge.badge-vegan { border-color: #86EFAC; }
         /* Gluten Free: light brown */
         .flavour-badge.badge-gf {
             background: #F6ECDD;
@@ -617,9 +619,9 @@
 
             const badgeContainer = document.getElementById("modalDietaryBadges");
             badgeContainer.innerHTML = `
-                ${item.veg ? '<span class="flavour-badge">Vegetarian <span class="tick" aria-hidden="true">✓</span></span>' : ''}
-                ${item.vegan ? '<span class="flavour-badge">Vegan <span class="tick" aria-hidden="true">✓</span></span>' : ''}
-                ${item.gf ? '<span class="flavour-badge">Gluten Free <span class="tick" aria-hidden="true">✓</span></span>' : ''}
+                ${item.veg ? '<span class="flavour-badge badge-veg">Vegetarian <span class="tick" aria-hidden="true">✓</span></span>' : ''}
+                ${item.vegan ? '<span class="flavour-badge badge-vegan">Vegan <span class="tick" aria-hidden="true">✓</span></span>' : ''}
+                ${item.gf ? '<span class="flavour-badge badge-gf">Gluten Free <span class="tick" aria-hidden="true">✓</span></span>' : ''}
             `;
 
             const containsBox = document.getElementById("modalContainsBox");
