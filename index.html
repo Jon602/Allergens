@@ -95,6 +95,47 @@
             font-size: 10px;
             font-weight: 900;
         }
+        /* Vegetarian: fresh light green */
+        .flavour-badge.badge-veg {
+            background: #F1F9E2;
+            color: #46701A;
+            border-color: #C3DE8C;
+        }
+        .flavour-badge.badge-veg .tick { color: #5A8F1E; }
+        /* Vegan: solid deep green, matching the vegan flavour titles */
+        .flavour-badge.badge-vegan {
+            background: #14532D;
+            color: #FFFFFF;
+            border-color: #14532D;
+        }
+        .flavour-badge.badge-vegan .tick { color: #86EFAC; }
+        /* Gluten Free: light brown */
+        .flavour-badge.badge-gf {
+            background: #F6ECDD;
+            color: #7A5230;
+            border-color: #DEC6A4;
+        }
+        .flavour-badge.badge-gf .tick { color: #8B5E34; }
+        /* Filter badges under the search bar: same look, larger tap target, ring when active */
+        .flavour-badge.filter-badge {
+            font-size: 12px;
+            padding: 6px 13px;
+            gap: 5px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: box-shadow .15s ease, transform .15s ease;
+        }
+        .flavour-badge.filter-badge .tick { font-size: 12px; }
+        .flavour-badge.filter-badge:hover { transform: translateY(-1px); }
+        .flavour-badge.filter-badge:focus-visible { outline: 2px solid #1F1714; outline-offset: 2px; }
+        .flavour-badge.filter-badge.is-active {
+            box-shadow: 0 0 0 2px #F6F3EE, 0 0 0 4px #FF1A1A;
+        }
+        /* Mobile: slightly tighter badges so Vegetarian and Gluten Free fit side by side */
+        @media (max-width: 480px) {
+            .flavour-badge:not(.filter-badge) { font-size: 9px; padding: 2px 5px; gap: 2px; white-space: nowrap; }
+            .flavour-badge:not(.filter-badge) .tick { font-size: 9px; }
+        }
     </style>
 </head>
 <body class="min-h-full flex flex-col text-choc-900 bg-cream-100 antialiased selection:bg-brandOrange-500 selection:text-white">
@@ -144,17 +185,11 @@
                 </button>
             </div>
 
-            <!-- Dietary Filter Toggles (Center Aligned) -->
-            <div class="flex items-center justify-center gap-2 overflow-x-auto pb-0.5 no-scrollbar text-xs">
-                <button onclick="toggleFilter('veg')" id="filter-veg" class="whitespace-nowrap px-3.5 py-1.5 rounded-full border border-cream-200 bg-white text-choc-900 font-semibold transition-all hover:border-brandOrange-500 flex items-center gap-1.5 shadow-sm">
-                    🌱 Vegetarian
-                </button>
-                <button onclick="toggleFilter('vegan')" id="filter-vegan" class="whitespace-nowrap px-3.5 py-1.5 rounded-full border border-cream-200 bg-white text-choc-900 font-semibold transition-all hover:border-brandOrange-500 flex items-center gap-1.5 shadow-sm">
-                    🌿 Vegan
-                </button>
-                <button onclick="toggleFilter('gf')" id="filter-gf" class="whitespace-nowrap px-3.5 py-1.5 rounded-full border border-cream-200 bg-white text-choc-900 font-semibold transition-all hover:border-brandOrange-500 flex items-center gap-1.5 shadow-sm">
-                    🌾 Gluten Free
-                </button>
+            <!-- Dietary Filter Toggles (Center Aligned) - same badges as the flavour cards -->
+            <div class="flex items-center justify-center gap-2 overflow-x-auto pt-2.5 pb-1 no-scrollbar">
+                <button type="button" onclick="toggleFilter('veg')" id="filter-veg" aria-pressed="false" class="flavour-badge badge-veg filter-badge">Vegetarian <span class="tick" aria-hidden="true">✓</span></button>
+                <button type="button" onclick="toggleFilter('vegan')" id="filter-vegan" aria-pressed="false" class="flavour-badge badge-vegan filter-badge">Vegan <span class="tick" aria-hidden="true">✓</span></button>
+                <button type="button" onclick="toggleFilter('gf')" id="filter-gf" aria-pressed="false" class="flavour-badge badge-gf filter-badge">Gluten Free <span class="tick" aria-hidden="true">✓</span></button>
             </div>
         </div>
     </div>
@@ -515,16 +550,16 @@
         function createProductCard(item) {
             const badge = "flavour-badge";
             return `
-                <div onclick="openModal(${item.id})" class="flavour-card p-3 cursor-pointer flex flex-col items-center justify-center text-center group">
+                <div onclick="openModal(${item.id})" class="flavour-card px-2 py-3 sm:px-3 cursor-pointer flex flex-col items-center justify-center text-center group">
                     <div class="space-y-2 w-full">
                         <h3 class="font-extrabold text-base sm:text-lg leading-tight line-clamp-2${item.vegan ? ' vegan-name' : ''}">${item.name}</h3>
 
                         <div class="w-3/4 h-px bg-black/25 mx-auto" aria-hidden="true"></div>
 
                         <div class="flex flex-wrap items-center justify-center gap-1">
-                            ${item.veg ? `<span class="${badge}">Vegetarian <span class="tick" aria-hidden="true">✓</span></span>` : ''}
-                            ${item.vegan ? `<span class="${badge}">Vegan <span class="tick" aria-hidden="true">✓</span></span>` : ''}
-                            ${item.gf ? `<span class="${badge}">Gluten Free <span class="tick" aria-hidden="true">✓</span></span>` : ''}
+                            ${item.veg ? `<span class="${badge} badge-veg">Vegetarian <span class="tick" aria-hidden="true">✓</span></span>` : ''}
+                            ${item.vegan ? `<span class="${badge} badge-vegan">Vegan <span class="tick" aria-hidden="true">✓</span></span>` : ''}
+                            ${item.gf ? `<span class="${badge} badge-gf">Gluten Free <span class="tick" aria-hidden="true">✓</span></span>` : ''}
                             ${item.contains.length === 0 && !item.note ? `<span class="${badge}">Clean <span class="tick" aria-hidden="true">✓</span></span>` : ''}
                         </div>
                     </div>
@@ -540,14 +575,8 @@
         function toggleFilter(filterKey) {
             activeFilters[filterKey] = !activeFilters[filterKey];
             const btn = document.getElementById(`filter-${filterKey}`);
-            
-            if (activeFilters[filterKey]) {
-                btn.classList.remove("bg-white", "text-choc-900", "border-cream-200");
-                btn.classList.add("bg-brandOrange-500", "text-white", "border-brandOrange-500", "shadow-md");
-            } else {
-                btn.classList.add("bg-white", "text-choc-900", "border-cream-200");
-                btn.classList.remove("bg-brandOrange-500", "text-white", "border-brandOrange-500", "shadow-md");
-            }
+            btn.classList.toggle("is-active", activeFilters[filterKey]);
+            btn.setAttribute("aria-pressed", String(activeFilters[filterKey]));
 
             renderMenu();
         }
@@ -571,8 +600,8 @@
             ['veg', 'vegan', 'gf'].forEach(key => {
                 const btn = document.getElementById(`filter-${key}`);
                 if (btn) {
-                    btn.classList.add("bg-white", "text-choc-900", "border-cream-200");
-                    btn.classList.remove("bg-brandOrange-500", "text-white", "border-brandOrange-500", "shadow-md");
+                    btn.classList.remove("is-active");
+                    btn.setAttribute("aria-pressed", "false");
                 }
             });
 
