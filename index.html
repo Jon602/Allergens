@@ -125,13 +125,17 @@
             gap: 5px;
             cursor: pointer;
             white-space: nowrap;
-            transition: box-shadow .15s ease, transform .15s ease;
+            transition: transform .15s ease;
         }
         .flavour-badge.filter-badge .tick { font-size: 12px; }
-        .flavour-badge.filter-badge:hover { transform: translateY(-1px); }
+        @media (hover: hover) { .flavour-badge.filter-badge:hover { transform: translateY(-1px); } }
         .flavour-badge.filter-badge:focus-visible { outline: 2px solid #1F1714; outline-offset: 2px; }
         .flavour-badge.filter-badge.is-active {
             box-shadow: 0 0 0 2px #F6F3EE, 0 0 0 4px #FF1A1A;
+        }
+        /* Stop iOS Safari auto-zooming when a text field is focused (it zooms when font-size is under 16px) */
+        input[type="text"], input[type="search"], input:not([type]), select, textarea {
+            font-size: 16px !important;
         }
         /* Mobile: slightly tighter badges so Vegetarian and Gluten Free fit side by side */
         @media (max-width: 480px) {
@@ -188,7 +192,7 @@
             </div>
 
             <!-- Dietary Filter Toggles (Center Aligned) - same badges as the flavour cards -->
-            <div class="flex items-center justify-center gap-2 overflow-x-auto pt-2.5 pb-1 no-scrollbar">
+            <div class="flex items-center justify-center gap-2 overflow-x-auto px-1 pt-2.5 pb-2 no-scrollbar">
                 <button type="button" onclick="toggleFilter('veg')" id="filter-veg" aria-pressed="false" class="flavour-badge badge-veg filter-badge">Vegetarian <span class="tick" aria-hidden="true">✓</span></button>
                 <button type="button" onclick="toggleFilter('vegan')" id="filter-vegan" aria-pressed="false" class="flavour-badge badge-vegan filter-badge">Vegan <span class="tick" aria-hidden="true">✓</span></button>
                 <button type="button" onclick="toggleFilter('gf')" id="filter-gf" aria-pressed="false" class="flavour-badge badge-gf filter-badge">Gluten Free <span class="tick" aria-hidden="true">✓</span></button>
@@ -579,6 +583,7 @@
             const btn = document.getElementById(`filter-${filterKey}`);
             btn.classList.toggle("is-active", activeFilters[filterKey]);
             btn.setAttribute("aria-pressed", String(activeFilters[filterKey]));
+            btn.blur();
 
             renderMenu();
         }
