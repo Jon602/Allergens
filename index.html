@@ -102,15 +102,13 @@
             border-color: #C3DE8C;
         }
         .flavour-badge.badge-veg .tick { color: #5A8F1E; }
-        /* Vegan: solid deep green, matching the vegan flavour titles */
+        /* Vegan: light green with deep green text (same on the cards, popup and search filter) */
         .flavour-badge.badge-vegan {
-            background: #14532D;
-            color: #FFFFFF;
-            border-color: #14532D;
+            background: #E3F4E8;
+            color: #14532D;
+            border-color: #86C99A;
         }
-        .flavour-badge.badge-vegan .tick { color: #86EFAC; }
-        /* In the dark popup header, give the solid vegan badge a light edge so it stays visible */
-        #modalDietaryBadges .flavour-badge.badge-vegan { border-color: #86EFAC; }
+        .flavour-badge.badge-vegan .tick { color: #16803D; }
         /* Gluten Free: light brown */
         .flavour-badge.badge-gf {
             background: #F6ECDD;
@@ -128,6 +126,9 @@
             transition: transform .15s ease;
         }
         .flavour-badge.filter-badge .tick { font-size: 12px; }
+        /* The tick only appears once a filter is selected */
+        .flavour-badge.filter-badge .tick-on { display: none; }
+        .flavour-badge.filter-badge.is-active .tick-on { display: inline; }
         @media (hover: hover) { .flavour-badge.filter-badge:hover { transform: translateY(-1px); } }
         .flavour-badge.filter-badge:focus-visible { outline: 2px solid #1F1714; outline-offset: 2px; }
         .flavour-badge.filter-badge.is-active {
@@ -192,10 +193,11 @@
             </div>
 
             <!-- Dietary Filter Toggles (Center Aligned) - same badges as the flavour cards -->
-            <div class="flex items-center justify-center gap-2 overflow-x-auto px-1 pt-2.5 pb-2 no-scrollbar">
-                <button type="button" onclick="toggleFilter('veg')" id="filter-veg" aria-pressed="false" class="flavour-badge badge-veg filter-badge">Vegetarian <span class="tick" aria-hidden="true">✓</span></button>
-                <button type="button" onclick="toggleFilter('vegan')" id="filter-vegan" aria-pressed="false" class="flavour-badge badge-vegan filter-badge">Vegan <span class="tick" aria-hidden="true">✓</span></button>
-                <button type="button" onclick="toggleFilter('gf')" id="filter-gf" aria-pressed="false" class="flavour-badge badge-gf filter-badge">Gluten Free <span class="tick" aria-hidden="true">✓</span></button>
+            <p class="text-center text-[11px] font-bold uppercase tracking-wider text-mutedBrown pt-0.5">Tap to filter by diet</p>
+            <div class="flex items-center justify-center gap-2 overflow-x-auto px-1 pt-1 pb-2 no-scrollbar">
+                <button type="button" onclick="toggleFilter('veg')" id="filter-veg" aria-pressed="false" class="flavour-badge badge-veg filter-badge">Vegetarian <span class="tick tick-on" aria-hidden="true">✓</span></button>
+                <button type="button" onclick="toggleFilter('vegan')" id="filter-vegan" aria-pressed="false" class="flavour-badge badge-vegan filter-badge">Vegan <span class="tick tick-on" aria-hidden="true">✓</span></button>
+                <button type="button" onclick="toggleFilter('gf')" id="filter-gf" aria-pressed="false" class="flavour-badge badge-gf filter-badge">Gluten Free <span class="tick tick-on" aria-hidden="true">✓</span></button>
             </div>
         </div>
     </div>
