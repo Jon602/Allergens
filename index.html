@@ -119,8 +119,10 @@
         /* Filter badges under the search bar: same look, larger tap target, ring when active */
         .flavour-badge.filter-badge {
             font-size: 12px;
-            padding: 6px 13px;
-            gap: 5px;
+            padding: 9px 6px;
+            gap: 4px;
+            justify-content: center;
+            min-width: 0;
             cursor: pointer;
             white-space: nowrap;
             transition: transform .15s ease;
@@ -137,6 +139,11 @@
         /* Stop iOS Safari auto-zooming when a text field is focused (it zooms when font-size is under 16px) */
         input[type="text"], input[type="search"], input:not([type]), select, textarea {
             font-size: 16px !important;
+        }
+        /* Very narrow phones: keep all three filters on one line */
+        @media (max-width: 380px) {
+            .flavour-badge.filter-badge { font-size: 11px; padding: 9px 4px; gap: 3px; }
+            .flavour-badge.filter-badge .tick { font-size: 11px; }
         }
         /* Mobile: slightly tighter badges so Vegetarian and Gluten Free fit side by side */
         @media (max-width: 480px) {
@@ -173,31 +180,33 @@
     </header>
 
     <!-- PAGE TITLE -->
-    <div class="bg-cream-100 px-4 pt-3">
+    <div class="bg-cream-100 px-4 pt-4">
         <div class="max-w-3xl mx-auto">
-            <p class="text-center text-sm font-bold text-choc-900 uppercase tracking-wider pb-1">Allergen Reference Guide</p>
+            <p class="text-center text-[13px] font-extrabold text-choc-900 uppercase tracking-[0.16em] pb-1">Allergen Reference Guide</p>
         </div>
     </div>
 
     <!-- STICKY SEARCH & DIETARY FILTERS -->
     <div class="bg-cream-100/95 backdrop-blur-md sticky top-[61px] z-20 border-b border-cream-200/80 py-3 px-4 shadow-sm">
-        <div class="max-w-3xl mx-auto space-y-2.5">
+        <div class="max-w-3xl mx-auto space-y-3">
             
             <!-- Search Bar -->
             <div class="relative">
-                <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Search flavor or allergen (e.g., Pistachio, Wheat)..." class="w-full pl-10 pr-10 py-2.5 bg-white rounded-2xl text-sm font-medium placeholder-mutedBrown/60 border border-cream-200 focus:outline-none focus:ring-2 focus:ring-brandOrange-500 shadow-sm transition-all text-choc-900">
-                <svg class="w-4 h-4 text-mutedBrown absolute left-3.5 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                <button id="clearSearch" onclick="clearSearch()" class="hidden absolute right-3 top-3 text-mutedBrown hover:text-choc-900 p-0.5">
+                <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Search flavour or allergen" class="w-full pl-11 pr-10 py-3 bg-white rounded-2xl text-sm font-medium placeholder-mutedBrown/60 border border-cream-300 focus:outline-none focus:ring-2 focus:ring-brandOrange-500 shadow-sm transition-all text-choc-900">
+                <svg class="w-4 h-4 text-mutedBrown absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                <button id="clearSearch" onclick="clearSearch()" aria-label="Clear search" class="hidden absolute right-3.5 top-1/2 -translate-y-1/2 text-mutedBrown hover:text-choc-900 p-0.5">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
 
             <!-- Dietary Filter Toggles (Center Aligned) - same badges as the flavour cards -->
-            <p class="text-center text-[11px] font-bold uppercase tracking-wider text-mutedBrown pt-0.5">Tap to filter by diet</p>
-            <div class="flex items-center justify-center gap-2 overflow-x-auto px-1 pt-1 pb-2 no-scrollbar">
-                <button type="button" onclick="toggleFilter('veg')" id="filter-veg" aria-pressed="false" class="flavour-badge badge-veg filter-badge">Vegetarian <span class="tick tick-on" aria-hidden="true">✓</span></button>
-                <button type="button" onclick="toggleFilter('vegan')" id="filter-vegan" aria-pressed="false" class="flavour-badge badge-vegan filter-badge">Vegan <span class="tick tick-on" aria-hidden="true">✓</span></button>
-                <button type="button" onclick="toggleFilter('gf')" id="filter-gf" aria-pressed="false" class="flavour-badge badge-gf filter-badge">Gluten Free <span class="tick tick-on" aria-hidden="true">✓</span></button>
+            <div class="space-y-1.5">
+                <p class="text-xs font-semibold text-mutedBrown px-1">Filter by diet</p>
+                <div class="flex items-stretch gap-2">
+                <button type="button" onclick="toggleFilter('veg')" id="filter-veg" aria-pressed="false" class="flavour-badge badge-veg filter-badge flex-1">Vegetarian <span class="tick tick-on" aria-hidden="true">✓</span></button>
+                <button type="button" onclick="toggleFilter('vegan')" id="filter-vegan" aria-pressed="false" class="flavour-badge badge-vegan filter-badge flex-1">Vegan <span class="tick tick-on" aria-hidden="true">✓</span></button>
+                <button type="button" onclick="toggleFilter('gf')" id="filter-gf" aria-pressed="false" class="flavour-badge badge-gf filter-badge flex-1">Gluten Free <span class="tick tick-on" aria-hidden="true">✓</span></button>
+                </div>
             </div>
         </div>
     </div>
