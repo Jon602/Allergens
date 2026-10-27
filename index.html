@@ -292,7 +292,7 @@
             <p class="text-sm text-choc-900 font-medium leading-relaxed">
                 Our gelato is hand made in an environment that handles nuts, dairy, gluten, and egg. Please advise staff if you have severe allergies.
             </p>
-            <button id="noticeDismissBtn" onclick="dismissNotice()" class="w-full py-3 bg-choc-900 text-white rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-choc-800 transition-colors shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brandOrange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-brandOrange-50">Dismiss</button>
+            <button id="noticeDismissBtn" onclick="dismissNotice()" class="w-full py-3 bg-[#5B4636] text-white rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-[#4A382B] transition-colors shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brandOrange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-brandOrange-50">Dismiss</button>
         </div>
     </div>
 
@@ -301,7 +301,7 @@
         <div id="modalContent" class="bg-white rounded-[24px] max-w-md w-full overflow-hidden shadow-2xl border border-cream-200 transform scale-95 transition-transform duration-200 flex flex-col max-h-[85vh]">
             
             <!-- Modal Header -->
-            <div class="p-5 bg-choc-900 text-white flex items-start justify-between relative">
+            <div class="p-5 bg-[#5B4636] text-white flex items-start justify-between relative">
                 <div>
                     <span id="modalCategory" class="text-[10px] uppercase tracking-wider font-extrabold text-brandOrange-500 bg-brandOrange-500/10 px-2.5 py-0.5 rounded-full border border-brandOrange-500/20">Category</span>
                     <h2 id="modalTitle" class="text-xl font-black text-white mt-2 leading-tight">Product Name</h2>
@@ -337,7 +337,7 @@
 
             <!-- Modal Footer Button -->
             <div class="p-4 bg-white border-t border-cream-200 text-center">
-                <button onclick="closeModal()" class="w-full py-3 bg-choc-900 text-white rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-choc-800 transition-colors shadow-sm">Close</button>
+                <button onclick="closeModal()" class="w-full py-3 bg-[#5B4636] text-white rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-[#4A382B] transition-colors shadow-sm">Close</button>
             </div>
         </div>
     </div>
@@ -346,7 +346,7 @@
     <div id="infoModal" class="fixed inset-0 bg-choc-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden transition-opacity duration-200 opacity-0" onclick="if(event.target===this) toggleInfoModal()">
         <div class="bg-white rounded-[24px] max-w-sm w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-cream-200">
             <!-- Header -->
-            <div class="bg-choc-900 px-4 py-2.5 flex items-center justify-between gap-3 rounded-t-[24px]">
+            <div class="bg-[#5B4636] px-4 py-2.5 flex items-center justify-between gap-3 rounded-t-[24px]">
                 <div class="flex items-center gap-3 min-w-0">
                     <img src="mio-circle.png" alt="miogelato logo" class="w-9 h-9 shrink-0 rounded-full border border-white/20 object-cover">
                     <div class="min-w-0">
@@ -392,7 +392,7 @@
     <div id="pdfModal" role="dialog" aria-modal="true" aria-labelledby="pdfModalTitle" class="fixed inset-0 bg-choc-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden transition-opacity duration-200 opacity-0" onclick="if(event.target===this) closePdfModal()">
         <div id="pdfModalContent" class="bg-white rounded-[24px] max-w-lg w-full overflow-hidden shadow-2xl border border-cream-200 transform scale-95 transition-transform duration-200 flex flex-col max-h-[88vh]">
             <!-- Header -->
-            <div class="bg-choc-900 px-5 py-4 flex items-start justify-between gap-3 shrink-0">
+            <div class="bg-[#5B4636] px-5 py-4 flex items-start justify-between gap-3 shrink-0">
                 <div>
                     <h2 id="pdfModalTitle" class="text-lg font-black text-white leading-tight">Choose items for your PDF</h2>
                     <p class="text-[11px] text-amber-200/70 font-medium mt-1">Tick the flavours and products to include.</p>
@@ -417,7 +417,7 @@
             <!-- Footer -->
             <div class="px-5 py-3 border-t border-cream-200 bg-cream-50 flex items-center gap-3 shrink-0">
                 <button onclick="closePdfModal()" class="flex-1 py-3 bg-cream-100 text-choc-900 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-cream-200 transition-colors">Cancel</button>
-                <button id="pdfGenerateBtn" onclick="generateSelectedPDF()" class="flex-[2] py-3 bg-choc-900 text-white rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-choc-800 transition-colors shadow-sm flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed">
+                <button id="pdfGenerateBtn" onclick="generateSelectedPDF()" class="flex-[2] py-3 bg-[#5B4636] text-white rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-[#4A382B] transition-colors shadow-sm flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed">
                     <svg class="w-4 h-4 text-brandOrange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M12 4v11m0 0l-4-4m4 4l4-4"></path></svg>
                     Generate PDF
                 </button>
@@ -773,7 +773,7 @@
                 section.className = "space-y-2";
 
                 const head = document.createElement("label");
-                head.className = "flex items-center gap-2.5 px-3 py-2 rounded-xl bg-choc-900 text-white cursor-pointer select-none";
+                head.className = "flex items-center gap-2.5 px-3 py-2 rounded-xl bg-[#5B4636] text-white cursor-pointer select-none";
                 const catBox = document.createElement("input");
                 catBox.type = "checkbox";
                 catBox.dataset.cat = cat;
