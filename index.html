@@ -151,6 +151,15 @@
             .flavour-badge:not(.filter-badge) .tick { font-size: 9px; }
         }
     
+
+        /* Category cards (page-coloured) and tappable flavour rows */
+        .cat-card { background: #F6F3EE; border: 1px solid #E5DED5; border-radius: 16px; overflow: hidden; }
+        .flavour-row { min-height: 60px; border-top: 1px solid #E5DED5; transition: background-color .15s ease; }
+        .flavour-row:hover { background-color: rgba(56,40,32,0.04); }
+        .flavour-row:active { background-color: rgba(56,40,32,0.08); }
+        .flavour-row h3 { color: #000000; }
+        .flavour-row h3.vegan-name { color: #14532D; }
+
         /* Smooth accordion panels for category dropdowns */
         .cat-panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.28s ease; }
         .cat-panel.is-open { grid-template-rows: 1fr; }
@@ -229,7 +238,7 @@
     <main class="max-w-3xl w-full mx-auto px-4 py-6 flex-1 space-y-8">
 
         <!-- Category Sections -->
-        <div id="categoryContainer" class="space-y-6">
+        <div id="categoryContainer" class="space-y-3">
             <!-- Dynamically populated via JavaScript -->
         </div>
 
@@ -536,23 +545,28 @@
                     const isExpanded = searchQuery ? true : expandedCategories[cat];
 
                     const section = document.createElement("div");
-                    section.className = "space-y-3";
+                    section.className = "cat-card";
+
+                    const nice = cat.charAt(0) + cat.slice(1).toLowerCase();
+                    const noun = (cat === "HOT PUDDINGS" || cat === "CONES & SUNDRIES")
+                        ? (catItems.length === 1 ? "item" : "items")
+                        : (catItems.length === 1 ? "flavour" : "flavours");
 
                     section.innerHTML = `
-                        <!-- Revamped Category Banner Title -->
-                        <div class="pt-2">
-                            <button type="button" data-cat="${cat}" aria-expanded="${isExpanded}" aria-controls="cat-panel-${catIdx}" onclick="toggleCategory('${cat}')" class="w-full bg-transparent text-[#1F1714] border-2 border-[#1F1714] px-6 py-3.5 rounded-full hover:bg-[#1F1714]/5 active:scale-[0.99] transition-all flex items-center justify-between group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1F1714] focus-visible:ring-offset-2 focus-visible:ring-offset-cream-100">
-                                <div class="flex items-center gap-2.5">
-                                    <h2 class="font-bold text-sm uppercase tracking-widest text-[#1F1714]">${cat}</h2>
-                                    <span class="text-[11px] bg-[#1F1714] text-[#EEE1A1] px-2.5 py-0.5 rounded-full font-extrabold ml-1">${catItems.length}</span>
-                                </div>
-                                <svg class="cat-chevron w-5 h-5 text-[#1F1714] transform transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
-                            </button>
-                        </div>
+                        <button type="button" data-cat="${cat}" aria-expanded="${isExpanded}" aria-controls="cat-panel-${catIdx}" onclick="toggleCategory('${cat}')" class="w-full flex items-center gap-3 px-4 py-3.5 text-left hover:bg-choc-900/[0.03] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brandOrange-500">
+                            <span class="w-1 h-9 rounded-full bg-brandOrange-500 shrink-0" aria-hidden="true"></span>
+                            <span class="flex-1 min-w-0">
+                                <h2 class="font-extrabold text-base text-choc-900 leading-tight">${nice}</h2>
+                                <span class="block text-xs font-medium text-mutedBrown mt-0.5">${catItems.length} ${noun}</span>
+                            </span>
+                            <span class="shrink-0 w-8 h-8 rounded-full bg-cream-200 flex items-center justify-center">
+                                <svg class="cat-chevron w-[18px] h-[18px] text-choc-900 transform transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                            </span>
+                        </button>
 
                         <div id="cat-panel-${catIdx}" class="cat-panel${isExpanded ? ' is-open' : ''}">
                             <div class="cat-panel-inner">
-                                <div class="grid grid-cols-1 gap-3 pt-2 pb-1 px-1 -mx-1">
+                                <div>
                                     ${catItems.map(item => createProductCard(item)).join('')}
                                 </div>
                             </div>
@@ -573,7 +587,7 @@
         function createProductCard(item) {
             const badge = "flavour-badge";
             return `
-                <div onclick="openModal(${item.id})" class="flavour-card px-3 py-3 sm:px-4 cursor-pointer flex items-center justify-start text-left group">
+                <div onclick="openModal(${item.id})" class="flavour-row px-4 py-3 cursor-pointer flex items-center justify-start text-left group">
                     <div class="flex flex-col items-start gap-1.5 w-full">
                         <h3 class="font-extrabold text-base sm:text-lg leading-tight${item.vegan ? ' vegan-name' : ''}">${item.name}</h3>
 
