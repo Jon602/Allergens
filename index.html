@@ -1019,6 +1019,22 @@
             });
             closeColumn();
 
+            // ---- Pad every column with blank ruled rows so each page is filled down to the bottom of the A4 ----
+            const MIN_BLANK_H = 5.9;
+            if (columns.length % 2 === 1) columns.push({ rows: [], h: 0 });   // empty right-hand column on the last page
+            columns.forEach(col => {
+                const remaining = capacity - col.h;
+                const n = Math.floor(remaining / MIN_BLANK_H);
+                if (n <= 0) return;
+                const h = remaining / n;                                       // stretch rows slightly so the page is filled exactly
+                const last = col.rows[col.rows.length - 1];
+                let zebra = last && !last.band ? !last.zebra : false;
+                for (let i = 0; i < n; i++) {
+                    col.rows.push({ blank: true, h, zebra });
+                    zebra = !zebra;
+                }
+            });
+
             // ---- Draw one column (a table) ----
             const drawColumn = (col, slot) => {
                 const body = [], meta = [];
@@ -1026,6 +1042,9 @@
                     if (r.band) {
                         body.push([{ content: r.label, colSpan: 12, styles: { fillColor: C.choc, textColor: C.amber, fontStyle: "bold", fontSize: NAME_FS, halign: "left", minCellHeight: BAND_H, cellPadding: { top: 1.5, bottom: 1.5, left: 3, right: 2 } } }]);
                         meta.push({ band: true });
+                    } else if (r.blank) {
+                        body.push([{ content: "", styles: { minCellHeight: r.h } }, "", "", "", "", "", "", "", "", "", "", ""]);
+                        meta.push({ blank: true, zebra: r.zebra });
                     } else {
                         body.push([{ content: r.item.name, styles: { fontSize: NAME_FS, textColor: C.choc, minCellHeight: r.h } }, "", "", "", "", "", "", "", "", "", "", ""]);
                         const contains = new Set(r.item.contains.map(allergenKey).filter(Boolean));
@@ -1066,6 +1085,11 @@
                         if (d.section !== "body") return;
                         const m = meta[d.row.index];
                         if (m.band) return;
+                        if (m.blank) {
+                            doc.setDrawColor(...C.creamLine); doc.setLineWidth(0.15);
+                            doc.line(d.cell.x, d.cell.y + d.cell.height, d.cell.x + d.cell.width, d.cell.y + d.cell.height);
+                            return;
+                        }
                         const c = d.column.index;
                         const cx = d.cell.x + d.cell.width / 2;
                         const cy = d.cell.y + d.cell.height / 2;
