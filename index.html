@@ -145,9 +145,17 @@
             .flavour-badge.filter-badge { font-size: 11px; padding: 9px 4px; gap: 3px; }
             .flavour-badge.filter-badge .tick { font-size: 11px; }
         }
+        /* Diet badges on cards and popups match the location badges in size and text weight */
+        .flavour-badge:not(.filter-badge) {
+            padding: 4px 8px;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: .02em;
+            white-space: nowrap;
+        }
         /* Mobile: slightly tighter badges so Vegetarian and Gluten Free fit side by side */
         @media (max-width: 480px) {
-            .flavour-badge:not(.filter-badge) { font-size: 9px; padding: 2px 5px; gap: 2px; white-space: nowrap; }
+            .flavour-badge:not(.filter-badge) { font-size: 9px; padding: 3px 6px; gap: 2px; white-space: nowrap; }
             .flavour-badge:not(.filter-badge) .tick { font-size: 9px; }
         }
     
@@ -174,7 +182,7 @@
         /* Category cards (page-coloured) and tappable flavour rows */
         .cat-card { background: #EFEAE4; border: 1px solid #E0D8CE; border-radius: 16px; overflow: hidden; }
         /* Each flavour sits on its own card, the same colour as the page background */
-        .flavour-list { padding: 0 10px 10px; display: flex; flex-direction: column; gap: 8px; }
+        .flavour-list { padding: 0 6px 6px; display: flex; flex-direction: column; gap: 8px; }
         .flavour-row { min-height: 60px; background-color: #F6F3EE; border: 1px solid #E0D8CE; border-radius: 12px; transition: background-color .15s ease, transform .15s ease; }
         .flavour-row:hover { background-color: #FBF9F5; }
         .flavour-row:active { background-color: #EFEAE4; transform: scale(0.99); }
@@ -583,7 +591,7 @@
         function createProductCard(item) {
             const badge = "flavour-badge";
             return `
-                <div onclick="openModal(${item.id})" class="flavour-row px-4 py-3 cursor-pointer flex items-center justify-start gap-3 text-left group">
+                <div onclick="openModal(${item.id})" class="flavour-row pl-3 pr-2 py-3 cursor-pointer flex items-center justify-start gap-3 text-left group">
                     <div class="flex flex-col items-start gap-1.5 flex-1 min-w-0">
                         <h3 class="font-extrabold text-base sm:text-lg leading-tight${item.vegan ? ' vegan-name' : ''}">${item.name}</h3>
 
