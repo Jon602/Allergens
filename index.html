@@ -1060,6 +1060,7 @@
 
                 const left = ML + slot * (TW + GAP);
                 const headJobs = [];
+                const vJobs = [];   // faint vertical rules, drawn after the table so cell fills can't cover them
                 doc.autoTable({
                     head, body,
                     startY,
@@ -1085,6 +1086,10 @@
                         if (d.section !== "body") return;
                         const m = meta[d.row.index];
                         if (m.band) return;
+                        // right-hand edge of every cell except the last column -> vertical separator
+                        if (d.column.index <= 10) {
+                            vJobs.push({ x: d.cell.x + d.cell.width, y1: d.cell.y, y2: d.cell.y + d.cell.height, strong: d.column.index === 0 || d.column.index === 3 });
+                        }
                         if (m.blank) {
                             doc.setDrawColor(...C.creamLine); doc.setLineWidth(0.15);
                             doc.line(d.cell.x, d.cell.y + d.cell.height, d.cell.x + d.cell.width, d.cell.y + d.cell.height);
@@ -1108,6 +1113,14 @@
 
                 doc.setFont("helvetica", "bold"); doc.setFontSize(6.8); doc.setTextColor(...C.choc);
                 headJobs.forEach(j => doc.text(j.txt, j.x, j.y, { angle: 60 }));
+
+                // faint vertical rules between columns; slightly firmer after the name and after the diet group
+                doc.setLineCap("butt");
+                vJobs.forEach(j => {
+                    doc.setDrawColor(...(j.strong ? [212, 203, 192] : [234, 228, 220]));
+                    doc.setLineWidth(j.strong ? 0.25 : 0.12);
+                    doc.line(j.x, j.y1, j.x, j.y2);
+                });
             };
 
             // ---- Pages: two columns per page, filled from the top left ----
@@ -1116,6 +1129,9 @@
                 drawPageHeader();
                 drawColumn(columns[i], 0);
                 if (columns[i + 1]) drawColumn(columns[i + 1], 1);
+                // faint divider down the middle of the page between the two tables
+                doc.setDrawColor(...C.creamLine); doc.setLineWidth(0.3);
+                doc.line(ML + TW + GAP / 2, startY + 2, ML + TW + GAP / 2, BOTTOM);
             }
 
             // ---- Footer on every page ----
