@@ -402,11 +402,12 @@
             </div>
 
             <!-- Quick actions -->
-            <div class="px-5 py-3 flex items-center justify-between gap-3 border-b border-cream-200 bg-cream-50 shrink-0">
+            <div class="px-5 py-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b border-cream-200 bg-cream-50 shrink-0">
                 <span id="pdfSelectedCount" class="text-xs font-bold text-choc-900"></span>
                 <div class="flex items-center gap-2">
                     <button onclick="pdfSelectAll(true)" class="px-3 py-1.5 rounded-full bg-white border border-cream-200 hover:border-brandOrange-500 text-[11px] font-bold text-choc-900 transition-colors">Select all</button>
                     <button onclick="pdfSelectAll(false)" class="px-3 py-1.5 rounded-full bg-white border border-cream-200 hover:border-brandOrange-500 text-[11px] font-bold text-choc-900 transition-colors">Clear</button>
+                    <button id="pdfCollapseBtn" type="button" onclick="toggleAllPdfCategories()" class="px-3 py-1.5 rounded-full bg-white border border-cream-200 hover:border-brandOrange-500 text-[11px] font-bold text-choc-900 transition-colors">Collapse all</button>
                 </div>
             </div>
 
@@ -730,6 +731,7 @@
         // ------------------------------------------------------------------
         const PDF_CATEGORIES = ["GELATO", "SORBETS / VEGAN GELATO", "GUEST FLAVOURS", "HOT PUDDINGS", "CONES & SUNDRIES"];
         const pdfSelection = new Set();   // ids of products ticked in the picker
+        const pdfCollapsed = new Set();   // categories currently folded away in the picker
         let pdfSelectionReady = false;    // everything is ticked the first time the picker opens
 
         function openPdfModal() {
@@ -737,6 +739,8 @@
                 productsData.forEach(p => pdfSelection.add(p.id));
                 pdfSelectionReady = true;
             }
+            // the picker always opens with every section folded away
+            PDF_CATEGORIES.forEach(c => pdfCollapsed.add(c));
             renderPdfPicker();
             const modal = document.getElementById("pdfModal");
             const content = document.getElementById("pdfModalContent");
@@ -784,11 +788,18 @@
                 const catCount = document.createElement("span");
                 catCount.dataset.catCount = cat;
                 catCount.className = "text-[11px] font-semibold text-amber-200/80";
-                head.append(catBox, catName, catCount);
+                const tog = document.createElement("button");
+                tog.type = "button";
+                tog.dataset.toggle = cat;
+                tog.className = "w-6 h-6 -mr-1 shrink-0 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors";
+                tog.innerHTML = '<svg class="pdf-chev w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>';
+                tog.addEventListener("click", e => { e.preventDefault(); e.stopPropagation(); togglePdfCategory(cat); });
+                head.append(catBox, catName, catCount, tog);
                 section.appendChild(head);
 
                 const grid = document.createElement("div");
                 grid.className = "grid grid-cols-1 sm:grid-cols-2 gap-1.5";
+                grid.dataset.grid = cat;
                 items.forEach(item => {
                     const row = document.createElement("label");
                     row.className = "flex items-center gap-2.5 px-3 py-2 rounded-xl border border-cream-200 bg-white hover:border-brandOrange-500 cursor-pointer select-none transition-colors";
@@ -808,6 +819,32 @@
                 list.appendChild(section);
             });
             updatePdfPickerState();
+            applyPdfCollapse();
+        }
+
+        // Fold / unfold categories in the picker
+        function applyPdfCollapse() {
+            const list = document.getElementById("pdfPickerList");
+            list.querySelectorAll("[data-grid]").forEach(g => g.classList.toggle("hidden", pdfCollapsed.has(g.dataset.grid)));
+            list.querySelectorAll("[data-toggle]").forEach(b => {
+                const open = !pdfCollapsed.has(b.dataset.toggle);
+                b.setAttribute("aria-expanded", String(open));
+                b.setAttribute("aria-label", (open ? "Collapse " : "Expand ") + b.dataset.toggle);
+                b.querySelector(".pdf-chev").classList.toggle("rotate-180", open);
+            });
+            const allCollapsed = PDF_CATEGORIES.every(c => pdfCollapsed.has(c));
+            document.getElementById("pdfCollapseBtn").textContent = allCollapsed ? "Expand all" : "Collapse all";
+        }
+
+        function togglePdfCategory(cat) {
+            pdfCollapsed.has(cat) ? pdfCollapsed.delete(cat) : pdfCollapsed.add(cat);
+            applyPdfCollapse();
+        }
+
+        function toggleAllPdfCategories() {
+            const allCollapsed = PDF_CATEGORIES.every(c => pdfCollapsed.has(c));
+            if (allCollapsed) pdfCollapsed.clear(); else PDF_CATEGORIES.forEach(c => pdfCollapsed.add(c));
+            applyPdfCollapse();
         }
 
         function updatePdfPickerState() {
