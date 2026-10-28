@@ -152,11 +152,32 @@
         }
     
 
+        /* Location-only badges: same pill shape as the diet badges */
+        .location-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+            border-radius: 9999px;
+            font-size: 10px;
+            font-weight: 800;
+            line-height: 1.2;
+            letter-spacing: .02em;
+            white-space: nowrap;
+            border: 1px solid transparent;
+        }
+        /* Morecambe: logo orange */
+        .location-badge.loc-morecambe { background: #FDE6D1; color: #A8500F; border-color: #E87A28; }
+        /* Lancaster: purple */
+        .location-badge.loc-lancaster { background: #EEE6FA; color: #5B2D91; border-color: #B79BE0; }
+        @media (max-width: 480px) { .location-badge { font-size: 9px; padding: 3px 6px; } }
+
         /* Category cards (page-coloured) and tappable flavour rows */
         .cat-card { background: #EFEAE4; border: 1px solid #E0D8CE; border-radius: 16px; overflow: hidden; }
-        .flavour-row { min-height: 60px; border-top: 1px solid #E0D8CE; transition: background-color .15s ease; }
-        .flavour-row:hover { background-color: rgba(56,40,32,0.04); }
-        .flavour-row:active { background-color: rgba(56,40,32,0.08); }
+        /* Each flavour sits on its own card, the same colour as the page background */
+        .flavour-list { padding: 0 10px 10px; display: flex; flex-direction: column; gap: 8px; }
+        .flavour-row { min-height: 60px; background-color: #F6F3EE; border: 1px solid #E0D8CE; border-radius: 12px; transition: background-color .15s ease, transform .15s ease; }
+        .flavour-row:hover { background-color: #FBF9F5; }
+        .flavour-row:active { background-color: #EFEAE4; transform: scale(0.99); }
         .flavour-row h3 { color: #000000; }
         .flavour-row h3.vegan-name { color: #000000; }
 
@@ -417,7 +438,7 @@
             { id: 12, name: "Pistachio", category: "GELATO", veg: true, vegan: false, gf: true, contains: ["Milk", "Nuts (Pistachio)"], traces: ["Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Peanuts", "Soya"] },
             { id: 13, name: "Raspberry Ripple", category: "GELATO", veg: true, vegan: false, gf: true, contains: ["Milk"], traces: ["Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] },
             { id: 14, name: "Salted Caramel", category: "GELATO", veg: true, vegan: false, gf: true, contains: ["Milk"], traces: ["Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] },
-            { id: 15, name: "Seaside Sherbet", category: "GELATO", veg: true, vegan: false, gf: true, contains: ["Milk"], traces: ["Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] },
+            { id: 15, name: "Seaside Sherbet", category: "GELATO", only: "Morecambe", veg: true, vegan: false, gf: true, contains: ["Milk"], traces: ["Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] },
             { id: 16, name: "Soft Serve", category: "GELATO", veg: true, vegan: false, gf: true, contains: ["Milk"], traces: ["Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] },
             { id: 17, name: "Tiramisu", category: "GELATO", veg: true, vegan: false, gf: true, contains: ["Milk", "Egg"], traces: ["Gluten (Wheat)", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] },
             { id: 18, name: "White Chocolate", category: "GELATO", veg: true, vegan: false, gf: true, contains: ["Milk", "Soya"], traces: ["Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
@@ -425,9 +446,9 @@
             { id: 19, name: "Dark Chocolate Sorbet", category: "SORBETS / VEGAN GELATO", veg: true, vegan: true, gf: true, contains: ["Soya"], traces: ["Milk", "Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
             { id: 20, name: "Mango Sorbet", category: "SORBETS / VEGAN GELATO", veg: true, vegan: true, gf: true, contains: ["Soya"], traces: ["Milk", "Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
             { id: 21, name: "Mixed Berry Sorbet", category: "SORBETS / VEGAN GELATO", veg: true, vegan: true, gf: true, contains: ["Soya", "Sulphur Dioxide/Sulphites"], traces: ["Milk", "Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
-            { id: 22, name: "Strawberry Sorbet", category: "SORBETS / VEGAN GELATO", veg: true, vegan: true, gf: true, contains: ["Soya"], traces: ["Milk", "Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
-            { id: 33, name: "Vegan Oreo", category: "SORBETS / VEGAN GELATO", veg: true, vegan: true, gf: false, contains: ["Gluten (Wheat)", "Soya"], traces: ["Milk", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
-            { id: 34, name: "Vegan Biscoff", category: "SORBETS / VEGAN GELATO", veg: true, vegan: true, gf: false, contains: ["Gluten (Wheat)", "Soya"], traces: ["Milk", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
+            { id: 22, name: "Strawberry Sorbet", category: "SORBETS / VEGAN GELATO", only: "Morecambe", veg: true, vegan: true, gf: true, contains: ["Soya"], traces: ["Milk", "Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
+            { id: 33, name: "Vegan Oreo", category: "SORBETS / VEGAN GELATO", only: "Lancaster", veg: true, vegan: true, gf: false, contains: ["Gluten (Wheat)", "Soya"], traces: ["Milk", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
+            { id: 34, name: "Vegan Biscoff", category: "SORBETS / VEGAN GELATO", only: "Lancaster", veg: true, vegan: true, gf: false, contains: ["Gluten (Wheat)", "Soya"], traces: ["Milk", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
 
             { id: 35, name: "White Chocolate & Raspberry", category: "GUEST FLAVOURS", veg: true, vegan: false, gf: true, contains: ["Milk", "Soya"], traces: ["Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
             { id: 36, name: "Fresh Basil", category: "GUEST FLAVOURS", veg: true, vegan: false, gf: true, contains: ["Milk"], traces: ["Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] },
@@ -541,7 +562,7 @@
 
                         <div id="cat-panel-${catIdx}" class="cat-panel${isExpanded ? ' is-open' : ''}">
                             <div class="cat-panel-inner">
-                                <div>
+                                <div class="flavour-list">
                                     ${catItems.map(item => createProductCard(item)).join('')}
                                 </div>
                             </div>
@@ -562,8 +583,8 @@
         function createProductCard(item) {
             const badge = "flavour-badge";
             return `
-                <div onclick="openModal(${item.id})" class="flavour-row px-4 py-3 cursor-pointer flex items-center justify-start text-left group">
-                    <div class="flex flex-col items-start gap-1.5 w-full">
+                <div onclick="openModal(${item.id})" class="flavour-row px-4 py-3 cursor-pointer flex items-center justify-start gap-3 text-left group">
+                    <div class="flex flex-col items-start gap-1.5 flex-1 min-w-0">
                         <h3 class="font-extrabold text-base sm:text-lg leading-tight${item.vegan ? ' vegan-name' : ''}">${item.name}</h3>
 
                         <div class="flex flex-wrap items-center justify-start gap-1">
@@ -571,6 +592,7 @@
                             ${item.vegan ? `<span class="${badge} badge-vegan">Vegan <span class="tick" aria-hidden="true">✓</span></span>` : ''}
                             ${item.gf ? `<span class="${badge} badge-gf">Gluten Free <span class="tick" aria-hidden="true">✓</span></span>` : ''}
                             ${item.contains.length === 0 && !item.note ? `<span class="${badge}">Clean <span class="tick" aria-hidden="true">✓</span></span>` : ''}
+                            ${item.only ? `<span class="location-badge loc-${item.only.toLowerCase()}">${item.only} Only</span>` : ''}
                         </div>
                     </div>
                 </div>
@@ -638,6 +660,7 @@
                 ${item.veg ? '<span class="flavour-badge badge-veg">Vegetarian <span class="tick" aria-hidden="true">✓</span></span>' : ''}
                 ${item.vegan ? '<span class="flavour-badge badge-vegan">Vegan <span class="tick" aria-hidden="true">✓</span></span>' : ''}
                 ${item.gf ? '<span class="flavour-badge badge-gf">Gluten Free <span class="tick" aria-hidden="true">✓</span></span>' : ''}
+                ${item.only ? `<span class="location-badge loc-${item.only.toLowerCase()}">${item.only} Only</span>` : ''}
             `;
 
             const containsBox = document.getElementById("modalContainsBox");
