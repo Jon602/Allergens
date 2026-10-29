@@ -775,13 +775,9 @@
         const PDF_CATEGORIES = ["GELATO", "SORBETS / VEGAN GELATO", "GUEST FLAVOURS", "HOT PUDDINGS", "CONES & SUNDRIES"];
         const pdfSelection = new Set();   // ids of products ticked in the picker
         const pdfCollapsed = new Set();   // categories currently folded away in the picker
-        let pdfSelectionReady = false;    // everything is ticked the first time the picker opens
-
+        
         function openPdfModal() {
-            if (!pdfSelectionReady) {
-                productsData.forEach(p => pdfSelection.add(p.id));
-                pdfSelectionReady = true;
-            }
+            // nothing is ticked by default; any choices made are kept between openings
             // the picker always opens with every section folded away
             PDF_CATEGORIES.forEach(c => pdfCollapsed.add(c));
             renderPdfPicker();
@@ -816,32 +812,42 @@
                 if (!items.length) return;
 
                 const section = document.createElement("section");
-                section.className = "space-y-2";
+                section.className = "cat-card";
 
-                const head = document.createElement("label");
-                head.className = "flex items-center gap-2.5 px-3 py-2 rounded-xl bg-[#5B4636] text-white cursor-pointer select-none";
+                // Header styled to match the main page category headers
+                const head = document.createElement("div");
+                head.className = "flex items-center gap-3 px-4 py-3.5";
+                const bar = document.createElement("span");
+                bar.className = "w-1 h-9 rounded-full bg-brandOrange-500 shrink-0";
+                bar.setAttribute("aria-hidden", "true");
+                const lbl = document.createElement("label");
+                lbl.className = "flex-1 min-w-0 flex items-center gap-3 cursor-pointer select-none";
                 const catBox = document.createElement("input");
                 catBox.type = "checkbox";
                 catBox.dataset.cat = cat;
                 catBox.style.accentColor = "#E87A28";
                 catBox.className = "w-4 h-4 shrink-0 cursor-pointer";
+                const txt = document.createElement("span");
+                txt.className = "flex-1 min-w-0";
                 const catName = document.createElement("span");
-                catName.className = "flex-1 text-[11px] font-extrabold uppercase tracking-wider";
-                catName.textContent = cat;
+                catName.className = "block font-extrabold text-base text-choc-900 leading-tight";
+                catName.textContent = cat.charAt(0) + cat.slice(1).toLowerCase();
                 const catCount = document.createElement("span");
                 catCount.dataset.catCount = cat;
-                catCount.className = "text-[11px] font-semibold text-amber-200/80";
+                catCount.className = "block text-xs font-medium text-mutedBrown mt-0.5";
+                txt.append(catName, catCount);
+                lbl.append(catBox, txt);
                 const tog = document.createElement("button");
                 tog.type = "button";
                 tog.dataset.toggle = cat;
-                tog.className = "w-6 h-6 -mr-1 shrink-0 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors";
-                tog.innerHTML = '<svg class="pdf-chev w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>';
+                tog.className = "shrink-0 w-8 h-8 rounded-full bg-white flex items-center justify-center text-choc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-brandOrange-500";
+                tog.innerHTML = '<svg class="pdf-chev w-[18px] h-[18px] transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>';
                 tog.addEventListener("click", e => { e.preventDefault(); e.stopPropagation(); togglePdfCategory(cat); });
-                head.append(catBox, catName, catCount, tog);
+                head.append(bar, lbl, tog);
                 section.appendChild(head);
 
                 const grid = document.createElement("div");
-                grid.className = "grid grid-cols-1 sm:grid-cols-2 gap-1.5";
+                grid.className = "grid grid-cols-1 sm:grid-cols-2 gap-1.5 px-3 pb-3";
                 grid.dataset.grid = cat;
                 items.forEach(item => {
                     const row = document.createElement("label");
@@ -901,7 +907,7 @@
                 catBox.checked = n === items.length;
                 catBox.indeterminate = n > 0 && n < items.length;
                 const cnt = list.querySelector('[data-cat-count="' + cat.replace(/"/g, '\\"') + '"]');
-                if (cnt) cnt.textContent = n + " / " + items.length;
+                if (cnt) cnt.textContent = n + " of " + items.length + " selected";
             });
             document.getElementById("pdfSelectedCount").textContent =
                 pdfSelection.size + " of " + productsData.length + " selected";
