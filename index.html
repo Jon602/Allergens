@@ -1225,8 +1225,9 @@
             for (let p = 1; p <= totalPages; p++) {
                 doc.setPage(p);
                 doc.setDrawColor(...C.creamLine); doc.setLineWidth(0.3); doc.line(ML, PH - 11, PW - MR, PH - 11);
-                doc.setFont("helvetica", "normal"); doc.setFontSize(7); doc.setTextColor(...C.muted);
-                doc.text("Generated on " + dateStr, PW - MR, PH - 6.5, { align: "right" });
+                doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(...C.muted);
+                doc.text("Generated on " + dateStr + " @ allergens.miogelato.co.uk", PW - MR, PH - 6.5, { align: "right" });
+                doc.setFontSize(7);
                 if (totalPages > 1) doc.text("Page " + p + " of " + totalPages, ML, PH - 6.5);
             }
 
