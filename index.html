@@ -178,8 +178,10 @@
         /* Lancaster: purple */
         .location-badge.loc-lancaster { background: #EEE6FA; color: #5B2D91; border-color: #B79BE0; }
         /* Contact popup cards match their location badges */
-        .contact-card-morecambe { background: #FDE6D1; border-color: #E87A28; }
-        .contact-card-lancaster { background: #EEE6FA; border-color: #B79BE0; }
+        .contact-card-morecambe { background: #FDE6D1; border-color: #E87A28; border-width: 2px; border-left-width: 6px; box-shadow: 0 3px 10px rgba(232,122,40,0.25); }
+        .contact-card-lancaster { background: #EEE6FA; border-color: #B79BE0; border-width: 2px; border-left-width: 6px; box-shadow: 0 3px 10px rgba(121,76,190,0.22); }
+        .contact-card-morecambe h4 { color: #A8500F; font-size: 12px; }
+        .contact-card-lancaster h4 { color: #5B2D91; font-size: 12px; }
         .contact-card-general { border-color: #A68B73; }
         @media (max-width: 480px) { .location-badge { font-size: 9px; padding: 3px 6px; } }
 
@@ -187,9 +189,9 @@
         .cat-card { background: #EFEAE4; border: 1px solid #E0D8CE; border-radius: 16px; overflow: hidden; }
         /* Each flavour sits on its own card, the same colour as the page background */
         .flavour-list { padding: 0 6px 6px; display: flex; flex-direction: column; gap: 8px; }
-        .flavour-row { min-height: 60px; background-color: #F6F3EE; border: 1px solid #E0D8CE; border-radius: 12px; transition: background-color .15s ease, transform .15s ease; }
-        .flavour-row:hover { background-color: #FBF9F5; }
-        .flavour-row:active { background-color: #EFEAE4; transform: scale(0.99); }
+        .flavour-row { min-height: 60px; background-color: #FBF9F5; border: 1px solid #E0D8CE; border-radius: 12px; transition: background-color .15s ease, transform .15s ease; }
+        .flavour-row:hover { background-color: #FFFFFF; }
+        .flavour-row:active { background-color: #F6F3EE; transform: scale(0.99); }
         .flavour-row h3 { color: #000000; }
         .flavour-row h3.vegan-name { color: #000000; }
 
