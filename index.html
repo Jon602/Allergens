@@ -503,9 +503,13 @@
             { id: 33, name: "Vegan Oreo", category: "SORBETS / VEGAN GELATO", only: "Lancaster", veg: true, vegan: true, gf: false, contains: ["Gluten (Wheat)", "Soya"], traces: ["Milk", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
             { id: 34, name: "Vegan Biscoff", category: "SORBETS / VEGAN GELATO", only: "Lancaster", veg: true, vegan: true, gf: false, contains: ["Gluten (Wheat)", "Soya"], traces: ["Milk", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
 
+            { id: 44, name: "Bounty", category: "GUEST FLAVOURS", veg: true, vegan: false, gf: true, contains: ["Milk", "Soya"], traces: ["Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Sesame"] },
+            { id: 42, name: "Chocolate, Olive Oil & Sea Salt", category: "GUEST FLAVOURS", veg: true, vegan: false, gf: true, contains: ["Milk", "Soya"], traces: ["Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
+            { id: 41, name: "Espresso", category: "GUEST FLAVOURS", veg: true, vegan: false, gf: true, contains: ["Milk"], traces: ["Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] },
             { id: 36, name: "Fresh Basil", category: "GUEST FLAVOURS", veg: true, vegan: false, gf: true, contains: ["Milk"], traces: ["Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] },
+            { id: 43, name: "Gingerbread", category: "GUEST FLAVOURS", veg: true, vegan: false, gf: false, contains: ["Milk", "Gluten (Wheat)", "Egg"], traces: ["Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] },
             { id: 39, name: "Orange Choc Chip", category: "GUEST FLAVOURS", veg: true, vegan: false, gf: true, contains: ["Milk", "Soya"], traces: ["Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
-            { id: 38, name: "Rum & Hazelnut Brittle", category: "GUEST FLAVOURS", veg: true, vegan: false, gf: true, contains: ["Milk", "Nuts (Hazelnut)", "Peanuts"], traces: ["Gluten (Wheat)", "Egg", "Nuts (Pistachio)", "Soya"] },
+            { id: 38, name: "Rum & Hazelnut Brittle", category: "GUEST FLAVOURS", veg: true, vegan: false, gf: true, contains: ["Milk", "Nuts (Hazelnut)", "Peanuts", "Alcohol"], traces: ["Gluten (Wheat)", "Egg", "Nuts (Pistachio)", "Soya"] },
             { id: 37, name: "Treacle Toffee", category: "GUEST FLAVOURS", veg: true, vegan: false, gf: true, contains: ["Milk", "Sulphur Dioxide/Sulphites"], traces: ["Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] },
             { id: 35, name: "White Chocolate & Raspberry", category: "GUEST FLAVOURS", veg: true, vegan: false, gf: true, contains: ["Milk", "Soya"], traces: ["Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
 
@@ -1008,7 +1012,7 @@
         // ------------------------------------------------------------------
         // PDF EXPORT (A4 landscape allergen matrix)
         // ------------------------------------------------------------------
-        const PDF_ALLERGENS = ["Gluten", "Egg", "Milk", "Nuts (Hazelnuts)", "Nuts (Pistachio)", "Peanuts", "Soya", "Sulphites"];
+        const PDF_ALLERGENS = ["Gluten", "Egg", "Milk", "Nuts (Hazelnuts)", "Nuts (Pistachio)", "Peanuts", "Soya", "Sesame", "Sulphites", "Alcohol"];
 
         // Map the free-text allergen wording used in productsData onto the matrix columns
         function allergenKey(text) {
@@ -1018,7 +1022,9 @@
             if (t.includes("egg")) return "Egg";
             if (t.includes("milk")) return "Milk";
             if (t.includes("soya")) return "Soya";
+            if (t.includes("sesame")) return "Sesame";
             if (t.includes("sulphur") || t.includes("sulphite")) return "Sulphites";
+            if (t.includes("alcohol")) return "Alcohol";
             if (t.includes("hazelnut")) return "Nuts (Hazelnuts)";
             if (t.includes("pistachio")) return "Nuts (Pistachio)";
             return null;
@@ -1126,17 +1132,20 @@
             };
 
             // ---- Table geometry ----
-            const TW = 135, GAP = 7;
+            const headLabels = ["Vegetarian", "Vegan", "Gluten Free", ...PDF_ALLERGENS];
+            const TX = 8, TW = 137, GAP = 7;                // table left edge / width of each of the two tables (mm)
+            const NAME_COL_W = 36;
+            const NCOLS = 1 + headLabels.length;            // name + diet columns + allergen columns
+            const CELL_W = (TW - NAME_COL_W) / (NCOLS - 1); // every tick column shares the remaining width equally
             const startY = 22;
             const HEAD_H = 20;
             const BOTTOM = PH - 14;                       // lowest point a table may reach
-            const headLabels = ["Vegetarian", "Vegan", "Gluten Free", ...PDF_ALLERGENS];
 
-            const columnStyles = { 0: { cellWidth: 36, halign: "left", fontStyle: "bold" }, 1: { cellWidth: 9 }, 2: { cellWidth: 9 }, 3: { cellWidth: 9 } };
-            for (let i = 4; i <= 11; i++) columnStyles[i] = { cellWidth: 9 };
+            const columnStyles = { 0: { cellWidth: NAME_COL_W, halign: "left", fontStyle: "bold" } };
+            for (let i = 1; i < NCOLS; i++) columnStyles[i] = { cellWidth: CELL_W };
 
             // ---- Measure rows so the layout is exact (names can wrap onto 2 lines) ----
-            const NAME_FS = 7.6, NAME_W = 36 - 3;         // column width minus left/right padding
+            const NAME_FS = 7.6, NAME_W = NAME_COL_W - 3;         // column width minus left/right padding
             const lhf = typeof doc.getLineHeightFactor === "function" ? doc.getLineHeightFactor() : 1.15;
             const lineH = NAME_FS * lhf / doc.internal.scaleFactor;
             const BAND_H = lineH + 3 + 0.15;
@@ -1192,13 +1201,13 @@
                 const body = [], meta = [];
                 col.rows.forEach(r => {
                     if (r.band) {
-                        body.push([{ content: r.label, colSpan: 12, styles: { fillColor: C.choc, textColor: C.amber, fontStyle: "bold", fontSize: NAME_FS, halign: "left", minCellHeight: BAND_H, cellPadding: { top: 1.5, bottom: 1.5, left: 3, right: 2 } } }]);
+                        body.push([{ content: r.label, colSpan: NCOLS, styles: { fillColor: C.choc, textColor: C.amber, fontStyle: "bold", fontSize: NAME_FS, halign: "left", minCellHeight: BAND_H, cellPadding: { top: 1.5, bottom: 1.5, left: 3, right: 2 } } }]);
                         meta.push({ band: true });
                     } else if (r.blank) {
-                        body.push([{ content: "", styles: { minCellHeight: r.h } }, "", "", "", "", "", "", "", "", "", "", ""]);
+                        body.push([{ content: "", styles: { minCellHeight: r.h } }, ...Array(NCOLS - 1).fill("")]);
                         meta.push({ blank: true, zebra: r.zebra });
                     } else {
-                        body.push([{ content: r.item.name, styles: { fontSize: NAME_FS, textColor: C.choc, minCellHeight: r.h } }, "", "", "", "", "", "", "", "", "", "", ""]);
+                        body.push([{ content: r.item.name, styles: { fontSize: NAME_FS, textColor: C.choc, minCellHeight: r.h } }, ...Array(NCOLS - 1).fill("")]);
                         const contains = new Set(r.item.contains.map(allergenKey).filter(Boolean));
                         const traces = new Set(r.item.traces.map(allergenKey).filter(Boolean));
                         meta.push({ item: r.item, contains, traces, zebra: r.zebra });
@@ -1210,7 +1219,7 @@
                     styles: { fillColor: C.creamLine, textColor: C.choc, fontStyle: "bold", fontSize: 7, halign: "left", valign: "bottom", minCellHeight: HEAD_H, cellPadding: { top: 1.6, bottom: 2, left: 2, right: 1 } }
                 }))];
 
-                const left = ML + slot * (TW + GAP);
+                const left = TX + slot * (TW + GAP);
                 const headJobs = [];
                 const vJobs = [];   // faint vertical rules, drawn after the table so cell fills can't cover them
                 doc.autoTable({
@@ -1230,16 +1239,16 @@
                     didDrawCell: d => {
                         if (d.section === "head" && d.column.index >= 1) {
                             // queued and drawn after the table so neighbouring header cells can't paint over the text
-                            const isLast = d.column.index === headLabels.length; // Sulphites stays where it is
-                            const nudge = isLast ? 0 : 3;
-                            headJobs.push({ txt: headLabels[d.column.index - 1], x: d.cell.x + 2.6 + nudge, y: d.cell.y + d.cell.height - 1.6 });
+                            const isLast = d.column.index === headLabels.length; // last column stays where it is
+                            const nudge = isLast ? 0 : 3 * CELL_W / 9;
+                            headJobs.push({ txt: headLabels[d.column.index - 1], x: d.cell.x + (2.6 * CELL_W / 9) + nudge, y: d.cell.y + d.cell.height - 1.6 });
                             return;
                         }
                         if (d.section !== "body") return;
                         const m = meta[d.row.index];
                         if (m.band) return;
                         // right-hand edge of every cell except the last column -> vertical separator
-                        if (d.column.index <= 10) {
+                        if (d.column.index <= NCOLS - 2) {
                             vJobs.push({ x: d.cell.x + d.cell.width, y1: d.cell.y, y2: d.cell.y + d.cell.height, strong: d.column.index === 0 || d.column.index === 3 });
                         }
                         if (m.blank) {
@@ -1253,7 +1262,7 @@
                         if (c === 1 && m.item.veg) drawCheck(cx, cy, C.green);
                         else if (c === 2 && m.item.vegan) drawCheck(cx, cy, C.green);
                         else if (c === 3 && m.item.gf) drawCheck(cx, cy, C.green);
-                        else if (c >= 4 && c <= 11) {
+                        else if (c >= 4 && c < NCOLS) {
                             const key = PDF_ALLERGENS[c - 4];
                             if (m.contains.has(key)) drawContains(cx, cy);
                             else if (m.traces.has(key)) drawMayContain(cx, cy);
@@ -1283,7 +1292,7 @@
                 if (columns[i + 1]) drawColumn(columns[i + 1], 1);
                 // faint divider down the middle of the page between the two tables
                 doc.setDrawColor(...C.creamLine); doc.setLineWidth(0.3);
-                doc.line(ML + TW + GAP / 2, startY + 2, ML + TW + GAP / 2, BOTTOM);
+                doc.line(TX + TW + GAP / 2, startY + 2, TX + TW + GAP / 2, BOTTOM);
             }
 
             // ---- Footer on every page ----
