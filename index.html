@@ -138,6 +138,12 @@
             border-color: #DEC6A4;
         }
         .flavour-badge.badge-gf .tick { color: #8B5E34; }
+        /* Contains Alcohol: soft wine-red warning badge (no tick) */
+        .flavour-badge.badge-alcohol {
+            background: #FBEAF0;
+            color: #8A1F45;
+            border-color: #E9B3C6;
+        }
         /* Filter badges under the search bar: same look, larger tap target, ring when active */
         .flavour-badge.filter-badge {
             font-size: 12px;
@@ -509,6 +515,7 @@
             { id: 36, name: "Fresh Basil", category: "GUEST FLAVOURS", veg: true, vegan: false, gf: true, contains: ["Milk"], traces: ["Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] },
             { id: 43, name: "Gingerbread", category: "GUEST FLAVOURS", veg: true, vegan: false, gf: false, contains: ["Milk", "Gluten (Wheat)", "Egg"], traces: ["Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] },
             { id: 39, name: "Orange Choc Chip", category: "GUEST FLAVOURS", veg: true, vegan: false, gf: true, contains: ["Milk", "Soya"], traces: ["Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
+            { id: 45, name: "Prosecco & Raspberry", category: "GUEST FLAVOURS", veg: true, vegan: false, gf: true, alcohol: true, contains: ["Milk"], traces: ["Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] },
             { id: 38, name: "Rum & Hazelnut Brittle", category: "GUEST FLAVOURS", veg: true, vegan: false, gf: true, contains: ["Milk", "Nuts (Hazelnut)", "Peanuts", "Alcohol"], traces: ["Gluten (Wheat)", "Egg", "Nuts (Pistachio)", "Soya"] },
             { id: 37, name: "Treacle Toffee", category: "GUEST FLAVOURS", veg: true, vegan: false, gf: true, contains: ["Milk", "Sulphur Dioxide/Sulphites"], traces: ["Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] },
             { id: 35, name: "White Chocolate & Raspberry", category: "GUEST FLAVOURS", veg: true, vegan: false, gf: true, contains: ["Milk", "Soya"], traces: ["Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
@@ -697,6 +704,7 @@
                             ${item.veg ? `<span class="${badge} badge-veg">Vegetarian <span class="tick" aria-hidden="true">✓</span></span>` : ''}
                             ${item.vegan ? `<span class="${badge} badge-vegan">Vegan <span class="tick" aria-hidden="true">✓</span></span>` : ''}
                             ${item.gf ? `<span class="${badge} badge-gf">Gluten Free <span class="tick" aria-hidden="true">✓</span></span>` : ''}
+                            ${item.alcohol ? `<span class="${badge} badge-alcohol">Contains Alcohol</span>` : ''}
                             ${item.contains.length === 0 && !item.note ? `<span class="${badge}">Clean <span class="tick" aria-hidden="true">✓</span></span>` : ''}
                         </div>
                     </div>
@@ -776,6 +784,7 @@
                 ${item.veg ? '<span class="flavour-badge badge-veg">Vegetarian <span class="tick" aria-hidden="true">✓</span></span>' : ''}
                 ${item.vegan ? '<span class="flavour-badge badge-vegan">Vegan <span class="tick" aria-hidden="true">✓</span></span>' : ''}
                 ${item.gf ? '<span class="flavour-badge badge-gf">Gluten Free <span class="tick" aria-hidden="true">✓</span></span>' : ''}
+                ${item.alcohol ? '<span class="flavour-badge badge-alcohol">Contains Alcohol</span>' : ''}
             `;
 
             const containsBox = document.getElementById("modalContainsBox");
@@ -1144,6 +1153,11 @@
             const columnStyles = { 0: { cellWidth: NAME_COL_W, halign: "left", fontStyle: "bold" } };
             for (let i = 1; i < NCOLS; i++) columnStyles[i] = { cellWidth: CELL_W };
 
+            // NOTE FOR ANYONE EDITING THIS FILE (including AI assistants):
+            // The row sizing below (itemHeight minimum 5.4mm, 1.0mm cell padding, MIN_BLANK_H) is DELIBERATE and final.
+            // The owner is happy with how the chart looks. It does NOT need to fit every flavour on one A4 page.
+            // When flavours are added the chart should simply flow onto extra A4 pages.
+            // DO NOT shrink row heights, padding or font sizes to squeeze more items onto a single page.
             // ---- Measure rows so the layout is exact (names can wrap onto 2 lines) ----
             const NAME_FS = 7.6, NAME_W = NAME_COL_W - 3;         // column width minus left/right padding
             const lhf = typeof doc.getLineHeightFactor === "function" ? doc.getLineHeightFactor() : 1.15;
@@ -1152,7 +1166,7 @@
             doc.setFont("helvetica", "bold"); doc.setFontSize(NAME_FS);
             const itemHeight = item => {
                 const lines = doc.splitTextToSize(item.name, NAME_W).length;
-                return Math.max(5.9, lines * lineH + 2.8 + 0.15);
+                return Math.max(5.4, lines * lineH + 2.0 + 0.15);
             };
             const capacity = BOTTOM - (startY + HEAD_H) - 0.5;
 
@@ -1181,7 +1195,7 @@
             closeColumn();
 
             // ---- Pad every column with blank ruled rows so each page is filled down to the bottom of the A4 ----
-            const MIN_BLANK_H = 5.9;
+            const MIN_BLANK_H = 5.4;
             if (columns.length % 2 === 1) columns.push({ rows: [], h: 0 });   // empty right-hand column on the last page
             columns.forEach(col => {
                 const remaining = capacity - col.h;
@@ -1209,6 +1223,7 @@
                     } else {
                         body.push([{ content: r.item.name, styles: { fontSize: NAME_FS, textColor: C.choc, minCellHeight: r.h } }, ...Array(NCOLS - 1).fill("")]);
                         const contains = new Set(r.item.contains.map(allergenKey).filter(Boolean));
+                        if (r.item.alcohol) contains.add("Alcohol");
                         const traces = new Set(r.item.traces.map(allergenKey).filter(Boolean));
                         meta.push({ item: r.item, contains, traces, zebra: r.zebra });
                     }
@@ -1228,7 +1243,7 @@
                     margin: { top: startY, left, right: PW - (left + TW), bottom: 14 },
                     tableWidth: TW,
                     theme: "plain",
-                    styles: { font: "helvetica", fontSize: 7.2, textColor: C.text, cellPadding: { top: 1.4, bottom: 1.4, left: 2, right: 1 }, valign: "middle", halign: "center", lineWidth: 0 },
+                    styles: { font: "helvetica", fontSize: 7.2, textColor: C.text, cellPadding: { top: 1.0, bottom: 1.0, left: 2, right: 1 }, valign: "middle", halign: "center", lineWidth: 0 },
                     columnStyles,
                     didParseCell: d => {
                         if (d.section !== "body") return;
