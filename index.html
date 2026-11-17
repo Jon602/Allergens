@@ -226,11 +226,14 @@
         .cat-card { background: #EFEAE4; border: 1px solid #E0D8CE; border-radius: 16px; overflow: hidden; }
         /* Each flavour sits on its own card, the same colour as the page background */
         .flavour-list { padding: 0 6px 6px; display: flex; flex-direction: column; gap: 8px; }
-        .flavour-row { min-height: 60px; background-color: #FBF9F5; border: 1px solid #E0D8CE; border-radius: 12px; transition: background-color .15s ease, transform .15s ease; }
-        .flavour-row:hover { background-color: #FFFFFF; }
-        .flavour-row:active { background-color: #FCF7EA; transform: scale(0.99); }
-        .flavour-row h3 { color: #000000; }
-        .flavour-row h3.vegan-name { color: #000000; }
+        .flavour-row { min-height: 60px; background-color: #876B58; border: 1px solid #5B4636; border-radius: 12px; transition: background-color .15s ease, transform .15s ease; }
+        .flavour-row:hover { background-color: #977A66; }
+        .flavour-row:active { background-color: #7A6150; transform: scale(0.99); }
+        .flavour-row h3 { color: #FFFFFF; }
+        /* Lighter tints for the "only" notes so they read on the brown cards */
+        .flavour-row .store-note.loc-morecambe { color: #FFB46E; }
+        .flavour-row .store-note.loc-lancaster { color: #D2BAF5; }
+        .flavour-row h3.vegan-name { color: #FFFFFF; }
 
         /* Smooth accordion panels for category dropdowns */
         .cat-panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.28s ease; }
@@ -531,7 +534,15 @@
             { id: 29, name: "Wafer Cone", category: "CONES & SUNDRIES", veg: true, vegan: true, gf: false, contains: ["Gluten (Wheat)", "Soya"], traces: [] },
             { id: 30, name: "Miogelato Wafer", category: "CONES & SUNDRIES", veg: true, vegan: true, gf: false, contains: ["Gluten (Wheat)", "Soya"], traces: [] },
             { id: 31, name: "Wafer Curls", category: "CONES & SUNDRIES", veg: true, vegan: false, gf: false, contains: ["Gluten (Wheat)", "Egg", "Milk", "Soya"], traces: [] },
-            { id: 32, name: "Chocolate Flakes", category: "CONES & SUNDRIES", veg: true, vegan: false, gf: true, contains: ["Milk", "Soya"], traces: [] }
+            { id: 32, name: "Chocolate Flakes", category: "CONES & SUNDRIES", veg: true, vegan: false, gf: true, contains: ["Milk", "Soya"], traces: [] },
+            { id: 47, name: "Chocolate Sauce", category: "CONES & SUNDRIES", veg: true, vegan: true, gf: false, contains: ["Soya", "Gluten (Wheat)"], traces: ["Milk", "Peanuts", "Nuts"] },
+
+            { id: 48, name: "Tiramisu", category: "DESSERTS", veg: true, vegan: false, gf: false, alcohol: true, contains: ["Milk", "Egg", "Gluten (Wheat)"], traces: ["Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] },
+            { id: 49, name: "Bonet", category: "DESSERTS", veg: true, vegan: false, gf: true, alcohol: true, contains: ["Soya", "Egg"], traces: ["Milk", "Gluten (Wheat)", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
+            { id: 50, name: "Chocolate-coated scoop", category: "DESSERTS", veg: false, vegan: false, gf: false, contains: [], traces: [], note: "Please see the individual gelato flavour and chocolate sauce for allergen information." },
+            { id: 51, name: "Peach Melba", category: "DESSERTS", veg: true, vegan: false, gf: true, contains: ["Milk"], traces: ["Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] },
+            { id: 52, name: "Banana Split", category: "DESSERTS", veg: true, vegan: false, gf: true, contains: ["Milk", "Soya"], traces: ["Gluten (Wheat)", "Egg", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
+            { id: 53, name: "Sundae", category: "DESSERTS", veg: false, vegan: false, gf: false, contains: [], traces: [], note: "Allergen information is not available yet. Please consult our team before ordering." }
         ];
 
         let activeFilters = { veg: false, vegan: false, gf: false };
@@ -540,6 +551,7 @@
             "SORBETS / VEGAN GELATO": false,
             "GUEST FLAVOURS": false,
             "HOT PUDDINGS": false,
+            "DESSERTS": false,
             "CONES & SUNDRIES": false
         };
 
@@ -627,7 +639,7 @@
             container.innerHTML = "";
             let totalMatchCount = 0;
 
-            const categories = ["GELATO", "SORBETS / VEGAN GELATO", "GUEST FLAVOURS", "HOT PUDDINGS", "CONES & SUNDRIES"];
+            const categories = ["GELATO", "SORBETS / VEGAN GELATO", "GUEST FLAVOURS", "HOT PUDDINGS", "DESSERTS", "CONES & SUNDRIES"];
 
             categories.forEach((cat, catIdx) => {
                 const catItems = productsData.filter(item => {
@@ -722,6 +734,10 @@
         // PDF band label (upper case)
         function bandLabel(cat) {
             return cat === "SORBETS / VEGAN GELATO" ? "VEGAN & DAIRY-FREE" : cat;
+        }
+
+        function pdfBandLabel(cat) {
+            return cat === "DESSERTS" ? "DESSERTS - ALLERGEN INFO NOT PROVIDED" : bandLabel(cat);
         }
 
         function toggleCategory(category) {
@@ -852,7 +868,7 @@
         // ------------------------------------------------------------------
         // PDF ITEM PICKER (choose which flavours / products go in the PDF)
         // ------------------------------------------------------------------
-        const PDF_CATEGORIES = ["GELATO", "SORBETS / VEGAN GELATO", "GUEST FLAVOURS", "HOT PUDDINGS", "CONES & SUNDRIES"];
+        const PDF_CATEGORIES = ["GELATO", "SORBETS / VEGAN GELATO", "GUEST FLAVOURS", "HOT PUDDINGS", "DESSERTS", "CONES & SUNDRIES"];
         const pdfSelection = new Set();   // ids of products ticked in the picker
         const pdfCollapsed = new Set();   // categories currently folded away in the picker
         
@@ -1040,6 +1056,13 @@
             return null;
         }
 
+        // A plain "Nuts" (no type given) covers both nut columns in the chart
+        function allergenKeys(text) {
+            if (/^\s*(other\s+)?nuts\s*$/i.test(text)) return ["Nuts (Hazelnuts)", "Nuts (Pistachio)"];
+            const k = allergenKey(text);
+            return k ? [k] : [];
+        }
+
         // Gluten grains shown as letters in the chart's single Gluten column: W Wheat, R Rye, B Barley, O Oats.
         // Written in the data like "Gluten (Wheat)" or "Gluten (Wheat, Oats)". Spelt, Khorasan/Kamut, Emmer/Farro count as Wheat.
         function glutenGrains(list) {
@@ -1201,10 +1224,10 @@
                     if (idx === 0) {
                         // a category heading must never be stranded at the bottom of a column
                         if (cur.h + BAND_H + ih > capacity) closeColumn();
-                        addBand(bandLabel(cat));
+                        addBand(pdfBandLabel(cat));
                     } else if (cur.h + ih > capacity) {
                         closeColumn();
-                        addBand(bandLabel(cat) + " (continued)");
+                        addBand(pdfBandLabel(cat) + " (continued)");
                     }
                     cur.rows.push({ item, h: ih, zebra: idx % 2 === 1 });
                     cur.h += ih;
@@ -1240,9 +1263,9 @@
                         meta.push({ blank: true, zebra: r.zebra });
                     } else {
                         body.push([{ content: r.item.name, styles: { fontSize: NAME_FS, textColor: C.choc, minCellHeight: r.h } }, ...Array(NCOLS - 1).fill("")]);
-                        const contains = new Set(r.item.contains.map(allergenKey).filter(Boolean));
+                        const contains = new Set(r.item.contains.flatMap(allergenKeys));
                         if (r.item.alcohol) contains.add("Alcohol");
-                        const traces = new Set(r.item.traces.map(allergenKey).filter(Boolean));
+                        const traces = new Set(r.item.traces.flatMap(allergenKeys));
                         const gc = glutenGrains(r.item.contains);
                         const gt = [...glutenGrains(r.item.traces)].filter(g => !gc.has(g));
                         meta.push({ item: r.item, contains, traces, zebra: r.zebra, gc: [...gc], gt });
