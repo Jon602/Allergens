@@ -536,6 +536,7 @@
             { id: 31, name: "Wafer Curls", category: "CONES & SUNDRIES", veg: true, vegan: false, gf: false, contains: ["Gluten (Wheat)", "Egg", "Milk", "Soya"], traces: [] },
             { id: 32, name: "Chocolate Flakes", category: "CONES & SUNDRIES", veg: true, vegan: false, gf: true, contains: ["Milk", "Soya"], traces: [] },
             { id: 47, name: "Chocolate Sauce", category: "CONES & SUNDRIES", veg: true, vegan: true, gf: false, contains: ["Soya", "Gluten (Wheat)"], traces: ["Milk", "Peanuts", "Nuts"] },
+            { id: 54, name: "Chopped Nuts", category: "CONES & SUNDRIES", veg: true, vegan: true, gf: true, contains: ["Peanuts", "Nuts (Walnuts)", "Nuts (Almonds)"], traces: [] },
 
             { id: 48, name: "Tiramisu", category: "DESSERTS", veg: true, vegan: false, gf: false, alcohol: true, contains: ["Milk", "Egg", "Gluten (Wheat)"], traces: ["Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts", "Soya"] },
             { id: 49, name: "Bonet", category: "DESSERTS", veg: true, vegan: false, gf: true, alcohol: true, contains: ["Soya", "Egg"], traces: ["Milk", "Gluten (Wheat)", "Nuts (Hazelnut)", "Nuts (Pistachio)", "Peanuts"] },
@@ -1038,7 +1039,7 @@
         // ------------------------------------------------------------------
         // PDF EXPORT (A4 landscape allergen matrix)
         // ------------------------------------------------------------------
-        const PDF_ALLERGENS = ["Gluten", "Egg", "Milk", "Nuts (Hazelnuts)", "Nuts (Pistachio)", "Peanuts", "Soya", "Sesame", "Sulphites"];
+        const PDF_ALLERGENS = ["Gluten", "Egg", "Milk", "Nuts (Almonds)", "Nuts (Hazelnuts)", "Nuts (Pecan)", "Nuts (Pistachio)", "Nuts (Walnuts)", "Peanuts", "Sulphites", "Sesame", "Soya"];
 
         // Map the free-text allergen wording used in productsData onto the matrix columns
         function allergenKey(text) {
@@ -1051,14 +1052,17 @@
             if (t.includes("sesame")) return "Sesame";
             if (t.includes("sulphur") || t.includes("sulphite")) return "Sulphites";
             if (t.includes("alcohol")) return "Alcohol";
+            if (t.includes("almond")) return "Nuts (Almonds)";
             if (t.includes("hazelnut")) return "Nuts (Hazelnuts)";
+            if (t.includes("pecan")) return "Nuts (Pecan)";
             if (t.includes("pistachio")) return "Nuts (Pistachio)";
+            if (t.includes("walnut")) return "Nuts (Walnuts)";
             return null;
         }
 
         // A plain "Nuts" (no type given) covers both nut columns in the chart
         function allergenKeys(text) {
-            if (/^\s*(other\s+)?nuts\s*$/i.test(text)) return ["Nuts (Hazelnuts)", "Nuts (Pistachio)"];
+            if (/^\s*(other\s+)?nuts\s*$/i.test(text)) return ["Nuts (Almonds)", "Nuts (Hazelnuts)", "Nuts (Pecan)", "Nuts (Pistachio)", "Nuts (Walnuts)"];
             const k = allergenKey(text);
             return k ? [k] : [];
         }
@@ -1192,7 +1196,17 @@
             const BOTTOM = PH - 14;                       // lowest point a table may reach
 
             const columnStyles = { 0: { cellWidth: NAME_COL_W, halign: "left", fontStyle: "bold" } };
-            for (let i = 1; i < NCOLS; i++) columnStyles[i] = { cellWidth: i <= DIET_N ? DIET_W : ALLERGEN_W };
+            // Gluten gets extra room (it can show several grain markers); Sesame gives up the same width, so the table total is unchanged
+            const GLUTEN_EXTRA = 2.0;
+            for (let i = 1; i < NCOLS; i++) {
+                let w = i <= DIET_N ? DIET_W : ALLERGEN_W;
+                if (i > DIET_N) {
+                    const key = PDF_ALLERGENS[i - DIET_N - 1];
+                    if (key === "Gluten") w += GLUTEN_EXTRA;
+                    else if (key === "Sesame") w -= GLUTEN_EXTRA;
+                }
+                columnStyles[i] = { cellWidth: w };
+            }
 
             // NOTE FOR ANYONE EDITING THIS FILE (including AI assistants):
             // The row sizing below (itemHeight minimum 5.4mm, 1.0mm cell padding, MIN_BLANK_H) is DELIBERATE and final.
